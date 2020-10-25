@@ -28,3 +28,4 @@ public class RegistroNaoEncontradoException extends RuntimeException{
 
     }
 }
+
