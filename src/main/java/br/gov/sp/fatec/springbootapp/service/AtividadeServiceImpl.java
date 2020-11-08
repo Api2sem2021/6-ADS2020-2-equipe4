@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import br.gov.sp.fatec.springbootapp.entity.Usuario;
@@ -26,6 +27,7 @@ public class AtividadeServiceImpl implements AtividadeService {
     SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public Atividade criarAtividade(String nomeDestinatario, String nomeRemetente, String titulo, String conteudo,
             String dataDisparo, String dataAgendada, Integer status) {
 
@@ -51,13 +53,15 @@ public class AtividadeServiceImpl implements AtividadeService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deletarAtividade(Long notID) {
         atvRepo.deleteById(notID);
     }
 
     @Override
     @Transactional
-    public Atividade atualizarStatusAtividade(Long notID, Integer status) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
+    public Atividade atualizarStatusAtividade(Long notID, Integer status) throws RegistroNaoEncontradoException{
 
         Optional<Atividade> notOp = atvRepo.findById(notID);
 
@@ -73,6 +77,7 @@ public class AtividadeServiceImpl implements AtividadeService {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public Atividade concluirAtividade(Long notID, Integer status, String dataConclusao) {
         Optional<Atividade> notOp = atvRepo.findById(notID);
 
