@@ -13,11 +13,14 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 
 import br.gov.sp.fatec.springbootapp.entity.Autorizacao;
 import br.gov.sp.fatec.springbootapp.entity.Usuario;
+
 import br.gov.sp.fatec.springbootapp.exception.RegistroNaoEncontradoException;
+
 import br.gov.sp.fatec.springbootapp.repository.AutorizacaoRepository;
 import br.gov.sp.fatec.springbootapp.repository.UsuarioRepository;
 
@@ -105,13 +108,24 @@ public class SegurancaServiceImpl implements SegurancaService {
 
     @Override
     public Usuario buscarUsuarioPorNomeESenha(String nome, String senha) {
-        // TODO Auto-generated method stub
-        return null;
+        Usuario usuario = usuarioRepo.buscaUsuaioPorNomeESenha(nome, senha);
+        
+        return usuario;
     }
 
     @Override
+    @Transactional
     public Usuario alterarSenha(String senha, Long id) {
-        // TODO Auto-generated method stub
-        return null;
+        Optional<Usuario> usuarioOp = usuarioRepo.findById(id);
+
+        if(usuarioOp.isPresent()){
+            Usuario usuario = usuarioOp.get();
+
+            usuario.setSenha(senha);
+            usuarioRepo.save(usuario);
+            return usuario;
+        
+        }
+        throw new RegistroNaoEncontradoException("Usuario não encontrado");
     }
 }

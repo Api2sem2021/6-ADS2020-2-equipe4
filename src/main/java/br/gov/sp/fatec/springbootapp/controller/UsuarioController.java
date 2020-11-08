@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,9 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.gov.sp.fatec.springbootapp.entity.Autorizacao;
-import br.gov.sp.fatec.springbootapp.entity.Notificacao;
+import br.gov.sp.fatec.springbootapp.entity.Atividade;
 import br.gov.sp.fatec.springbootapp.entity.Usuario;
-import br.gov.sp.fatec.springbootapp.repository.UsuarioRepository;
 import br.gov.sp.fatec.springbootapp.service.SegurancaService;
 
 // import br.gov.sp.fatec.springbootapp.controller.View;
@@ -36,9 +34,6 @@ public class UsuarioController {
 
     @Autowired
     private SegurancaService segService;
-
-    @Autowired
-    private UsuarioRepository usuarioRepo;
 
     @JsonView(View.UsuarioResumo.class)
     @GetMapping
@@ -61,17 +56,13 @@ public class UsuarioController {
     @JsonView(View.UsuarioResumo.class)
     @GetMapping(value = "/login")
     public Usuario buscarPorNomeESenha(@RequestParam("nome") String nome,@RequestParam("senha") String senha){
+        if(nome == "" || nome == null){
+            System.out.println("NOME "+ nome);
+        }
         return segService.buscarUsuarioPorNomeESenha(nome, senha);
     }
 
     @JsonView(View.UsuarioResumo.class)
-    @GetMapping(value = "/fetchAll")
-    public Set<Usuario> buscarUsuario(){
-        return usuarioRepo.buscarUsuarios();
-    }
-
-    @JsonView(View.UsuarioResumo.class)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Usuario> criarUsuario(@RequestBody Usuario usuario, UriComponentsBuilder uriComponentsBuilder){
         usuario = segService.criarUsuario(usuario.getNome(),usuario.getSenha(), "ROLE_USUARIO");
@@ -89,31 +80,31 @@ public class UsuarioController {
         return segService.buscarAutorizacaoPorNome(autorizacao);
     }
     
-    @JsonView(View.NotificacaoResumo.class)
-    @GetMapping(value = "/buscarNotificacoesEnviadas")
-    public ResponseEntity<Set<Notificacao>> buscarNotificacoesEnviadas(@RequestParam("nome") String nome, UriComponentsBuilder uriComponentsBuilder){
+    @JsonView(View.AtividadeResumo.class)
+    @GetMapping(value = "/buscarAtividadesEnviadas")
+    public ResponseEntity<Set<Atividade>> buscarNotificacoesEnviadas(@RequestParam("nome") String nome, UriComponentsBuilder uriComponentsBuilder){
         Usuario usuario = segService.buscarUsuarioPorNome(nome);
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setLocation(
             uriComponentsBuilder.path(
-                "/usuario/buscarNotificacoesEnviadas/"+ usuario.getId()).build().toUri());
-        Set<Notificacao> notificacoes = usuario.getNotificacoesEnviadas();
-        return  new ResponseEntity<Set<Notificacao>>(notificacoes, responseHeaders, HttpStatus.CREATED);
+                "/usuario/buscarAtividadesEnviadas/"+ usuario.getId()).build().toUri());
+        Set<Atividade> notificacoes = usuario.getAtividadesEnviadas();
+        return  new ResponseEntity<Set<Atividade>>(notificacoes, responseHeaders, HttpStatus.CREATED);
         
     }
 
-    @JsonView(View.NotificacaoResumo.class)
-    @PutMapping(value = "/buscarNotificacoesRecebidas")
-    public ResponseEntity<Set<Notificacao>> buscarNotificacoesRecebidas(@RequestParam("nome") String nome, UriComponentsBuilder uriComponentsBuilder){
+    @JsonView(View.AtividadeResumo.class)
+    @GetMapping(value = "/buscarAtividadesRecebidas")
+    public ResponseEntity<Set<Atividade>> buscarAtividadesRecebidas(@RequestParam("nome") String nome, UriComponentsBuilder uriComponentsBuilder){
         Usuario usuario = segService.buscarUsuarioPorNome(nome);
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setLocation(
             uriComponentsBuilder.path(
-                "/usuario/buscarNotificacoesEnviadas/"+ usuario.getId()).build().toUri());
-        Set<Notificacao> notificacoes = usuario.getNotificacoesRecebidas();
-        return  new ResponseEntity<Set<Notificacao>>(notificacoes, responseHeaders, HttpStatus.CREATED);
+                "/usuario/buscarAtividadesRecebidas/"+ usuario.getId()).build().toUri());
+        Set<Atividade> atividades = usuario.getAtividadesRecebidas();
+        return  new ResponseEntity<Set<Atividade>>(atividades, responseHeaders, HttpStatus.CREATED);
         
     }
 

@@ -11,10 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.CascadeType;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -26,15 +24,17 @@ import java.io.Serializable;
 @Entity
 @Table(name = "usr_usuario")
 public class Usuario implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
-    @JsonView({View.NotificacaoResumo.class, View.UsuarioResumo.class})
+    @JsonView({ View.AtividadeResumo.class, View.UsuarioResumo.class })
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "usr_id")
     private Long id;
-
+    
     @JsonView({ View.UsuarioResumo.class, View.AutorizacaoResumo.class, View.ConversaResumo.class,
-            View.MensagemResumo.class })
+            View.MensagemResumo.class, View.AtividadeResumo.class })
     @Column(name = "usr_nome")
     private String nome;
 
@@ -63,12 +63,12 @@ public class Usuario implements Serializable {
     @OneToOne(mappedBy = "destinatario")
     private Mensagem mensagem;
     
-    @JsonView(View.NotificacaoResumo.class)
-    @OneToMany(mappedBy = "notRemetente",fetch = FetchType.LAZY)
-    private Set<Notificacao> notificacoesEnviadas;
-
-    @OneToMany(mappedBy = "notRemetente", fetch = FetchType.LAZY)
-    private Set<Notificacao> notificacoesRecebidas;
+    @OneToMany(mappedBy = "atvRemetente",fetch = FetchType.LAZY)
+    private Set<Atividade> atividadesEnviadas;
+    
+    
+    @OneToMany(mappedBy = "atvDestinatario", fetch = FetchType.LAZY)
+    private Set<Atividade> atividadesRecebidas;
 
     public Long getId() {
         return this.id;
@@ -135,20 +135,24 @@ public class Usuario implements Serializable {
         this.mensagem = mensagem;
     }
 
-    public Set<Notificacao> getNotificacoesEnviadas() {
-        return notificacoesEnviadas;
+    public static long getSerialversionuid() {
+        return serialVersionUID;
     }
 
-    public void setNotificacoesEnviadas(Set<Notificacao> notificacoesEnviadas) {
-        this.notificacoesEnviadas = notificacoesEnviadas;
+    public Set<Atividade> getAtividadesEnviadas() {
+        return atividadesEnviadas;
     }
 
-    public Set<Notificacao> getNotificacoesRecebidas() {
-        return notificacoesRecebidas;
+    public void setAtividadesEnviadas(Set<Atividade> atividadesEnviadas) {
+        this.atividadesEnviadas = atividadesEnviadas;
     }
 
-    public void setNotificacoesRecebidas(Set<Notificacao> notificacoesRecebidas) {
-        this.notificacoesRecebidas = notificacoesRecebidas;
+    public Set<Atividade> getAtividadesRecebidas() {
+        return atividadesRecebidas;
+    }
+
+    public void setAtividadesRecebidas(Set<Atividade> atividadesRecebidas) {
+        this.atividadesRecebidas = atividadesRecebidas;
     }
 
 }
