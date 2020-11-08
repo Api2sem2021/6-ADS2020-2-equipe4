@@ -121,6 +121,9 @@
 <script>
 import axios from "axios";
 import M from "materialize-css";
+import {
+    computed
+} from "vue"
 
 let usuario;
 if (sessionStorage.usuario) {
@@ -129,11 +132,13 @@ if (sessionStorage.usuario) {
 
 let usuarios;
 async function getUsuarios() {
-    usuarios = await axios.get(`http://localhost:8081/spring-app/usuario/`, {
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-        },
-    });
+    let token =
+        usuarios = await axios.get(`http://localhost:8081/spring-app/usuario/`, {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Authorization": `Bearer ${this.$store.state.token}`
+            },
+        });
     usuarios = usuarios.data;
     return usuarios;
 }

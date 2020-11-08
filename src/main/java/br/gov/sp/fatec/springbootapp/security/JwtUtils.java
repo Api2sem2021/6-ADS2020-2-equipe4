@@ -29,7 +29,7 @@ public class JwtUtils {
         }
         String usuarioJson = mapper.writeValueAsString(usuarioSemSenha);
         Date agora = new Date();
-        Long hora = 1000L * 60L * 60L; // Uma hora
+        Long hora = 1000L * 60L * 6000L; //  Uma hora
         return Jwts.builder().claim("userDetails", usuarioJson).setIssuer("br.gov.sp.fatec")
                 .setSubject(usuario.getName()).setExpiration(new Date(agora.getTime() + hora))
                 .signWith(SignatureAlgorithm.HS512, KEY).compact();

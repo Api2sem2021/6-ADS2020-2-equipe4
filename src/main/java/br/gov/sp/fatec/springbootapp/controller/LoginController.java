@@ -15,10 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import br.gov.sp.fatec.springbootapp.security.JwtUtils;
 import br.gov.sp.fatec.springbootapp.security.Login;
 
+import br.gov.sp.fatec.springbootapp.service.SegurancaService;
+
 @RestController
 @RequestMapping(value = "/login")
 @CrossOrigin
 public class LoginController {
+
+    @Autowired
+    SegurancaService segService;
 
     @Autowired
     private AuthenticationManager authManager;
@@ -27,6 +32,7 @@ public class LoginController {
     public Login autenticar(@RequestBody Login login) throws JsonProcessingException {
         Authentication auth = new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword());
         auth = authManager.authenticate(auth);
+        
         login.setPassword(null);
         login.setToken(JwtUtils.generateToken(auth));
         return login;

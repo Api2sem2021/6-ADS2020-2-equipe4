@@ -192,6 +192,7 @@ async function getAtividades() {
         `http://localhost:8081/spring-app/usuario/buscarAtividadesRecebidas?nome=${usuario.nome}`, {
             headers: {
                 "Access-Control-Allow-Origin": "*",
+                "Authorization": `Bearer ${this.$store.state.token}`
             },
         }
     );
@@ -208,6 +209,7 @@ async function deleteAtividade(id, key) {
             }, {
                 headers: {
                     "Access-Control-Allow-Origin": "*",
+                    "Authorization": `Bearer ${this.$store.state.token}`
                 },
             }
         )
@@ -235,6 +237,7 @@ async function concluirAtividade(id, key) {
             }, {
                 headers: {
                     "Access-Control-Allow-Origin": "*",
+                    "Authorization": `Bearer ${this.$store.state.token}`
                 },
             }
         )
@@ -281,11 +284,6 @@ export default {
     },
     mounted() {
         M.Modal.init(document.querySelectorAll(".modal"));
-    },
-    beforeMount: async function () {
-        this.atividades = await this.getAtividades();
-        this.atividadesFiltradas = this.atividades;
-
         let calendar_options = {
             format: "dd/mm/yyyy",
             i18n: {
@@ -337,6 +335,11 @@ export default {
             document.querySelectorAll(".datepicker"),
             calendar_options
         );
+    },
+    beforeMount: async function () {
+        this.atividades = await this.getAtividades();
+        this.atividadesFiltradas = this.atividades;
+
         console.log(this.atividadesFiltradas);
     },
 };
