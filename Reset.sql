@@ -13,7 +13,7 @@ create table usr_usuario (
   usr_id bigint unsigned not null auto_increment,
   usr_nome varchar(20) not null,
   usr_senha varchar(100) not null,
-  usr_avatar varchar(100),
+  usr_avatar text,
   primary key (usr_id),
   unique key uni_usuario_nome (usr_nome)
 );
@@ -34,15 +34,19 @@ create table uau_usuario_autorizacao (
 );
 
 
-create table usr_notificacoes (
-  not_id bigint unsigned not null auto_increment,
-  not_remetente_id bigint unsigned not null,
-  not_destinatario_id bigint unsigned not null,
-  not_titulo varchar(20) not null,
-  not_conteudo varchar(255) not null,
-  primary key (not_id),
-  foreign key (not_remetente_id) references usr_usuario (usr_id) on delete restrict on update cascade,
-  foreign key (not_destinatario_id) references usr_usuario (usr_id) on delete restrict on update cascade
+create table usr_atividades (
+  atv_id bigint unsigned not null auto_increment,
+  atv_remetente_id bigint unsigned not null,
+  atv_destinatario_id bigint unsigned not null,
+  atv_titulo varchar(20) not null,
+  atv_data_disparo date not null,
+  atv_data_limite date not null,
+  atv_data_conclusao date,
+  atv_status int not null,
+  atv_conteudo varchar(255) not null,
+  primary key (atv_id),
+  foreign key (atv_remetente_id) references usr_usuario (usr_id) on delete restrict on update cascade,
+  foreign key (atv_destinatario_id) references usr_usuario (usr_id) on delete restrict on update cascade
 );
 
 
@@ -83,5 +87,7 @@ insert into usr_usuario (usr_nome, usr_senha)
     values ('admin','$2a$10$i3.Z8Yv1Fwl0I5SNjdCGkOTRGQjGvHjh/gMZhdc3e7LIovAklqM6C');
 insert into aut_autorizacao(aut_nome)
     values ('ROLE_ADMIN');
+insert into aut_autorizacao(aut_nome)
+    values ('ROLE_USUARIO');
 insert into uau_usuario_autorizacao 
     values (1, 1);

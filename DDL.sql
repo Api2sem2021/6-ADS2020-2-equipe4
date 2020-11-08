@@ -10,7 +10,7 @@ create table usr_usuario (
   usr_id bigint unsigned not null auto_increment,
   usr_nome varchar(20) not null,
   usr_senha varchar(50) not null,
-  usr_avatar varchar(255) not null,
+  usr_avatar text,
   primary key (usr_id),
   unique key uni_usuario_nome (usr_nome)
 );
@@ -78,7 +78,7 @@ create table usuarios_mensagens(
   foreign key usr_id_fk (usr_id) references usr_usuario (usr_id) on delete restrict on update cascade
 );
 
-insert into usr_usuario (usr_nome, usr_senha, usr_avatar) values('Fabiola', '12345', 'base64 image');
+insert into usr_usuario (usr_nome, usr_senha, usr_avatar) values('Fabiola', 'Z8Yv1Fwl0I5SNjdCGkOTRGQjGvHjh', 'base64 image');
 insert into usr_usuario (usr_nome, usr_senha, usr_avatar) values('Arthur', '12342345', 'base64 image');
 insert into aut_autorizacao (aut_nome)
     values('ROLE_ADMIN');

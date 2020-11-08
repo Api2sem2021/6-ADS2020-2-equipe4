@@ -109,7 +109,6 @@ public class SegurancaServiceImpl implements SegurancaService {
     @Override
     public Usuario buscarUsuarioPorNomeESenha(String nome, String senha) {
         Usuario usuario = usuarioRepo.buscaUsuaioPorNomeESenha(nome, senha);
-        
         return usuario;
     }
 
