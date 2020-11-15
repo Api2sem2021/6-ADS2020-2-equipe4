@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer  {
  
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/conversa");
+        registry.addEndpoint("/ws");
         registry.addEndpoint("/conversa").setAllowedOrigins("*").withSockJS();
     }
 }
