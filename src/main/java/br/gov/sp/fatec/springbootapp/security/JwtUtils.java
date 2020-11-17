@@ -29,11 +29,24 @@ public class JwtUtils {
         }
         String usuarioJson = mapper.writeValueAsString(usuarioSemSenha);
         Date agora = new Date();
-        Long hora = 1000L * 60L * 6000L; //  Uma hora
+        Long hora = 1000L * 60L * 6000L; // Uma hora
         return Jwts.builder().claim("userDetails", usuarioJson).setIssuer("br.gov.sp.fatec")
                 .setSubject(usuario.getName()).setExpiration(new Date(agora.getTime() + hora))
                 .signWith(SignatureAlgorithm.HS512, KEY).compact();
     }
+
+    public static String generateRefreshToken(Authentication usuario) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Login usuarioSemSenha = new Login();
+        usuarioSemSenha.setUsername(usuario.getName());
+
+        String usuarioJson = mapper.writeValueAsString(usuarioSemSenha);
+
+        return Jwts.builder().claim("userDetails", usuarioJson).setIssuer("br.gov.sp.fatec")
+                .setSubject(usuario.getName()).signWith(SignatureAlgorithm.HS512, KEY).compact();
+    }
+
+    
 
     public static Authentication parseToken(String token) throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
