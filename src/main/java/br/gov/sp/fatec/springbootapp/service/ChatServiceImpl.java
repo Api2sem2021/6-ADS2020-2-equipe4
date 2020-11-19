@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.transaction.Transactional;
+
 import com.fasterxml.jackson.annotation.JsonView;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +57,9 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional
     public Mensagem enviarMensagem(Long chatId, String conteudo, String remetenteNome, String destinatarioNome,
-    Long remetenteId, Long destinatarioId) {
+    Long remetenteId, Long destinatarioId, String horario) {
         Conversa conversa = conversaRepo.buscarPorId(chatId);
 
         if (conversa != null) {
@@ -64,12 +67,14 @@ public class ChatServiceImpl implements ChatService {
             Date hora;
             try {
                 data = formatoData.parse("2017-11-15");
-                hora = formatoHora.parse("15:30:14");
+                hora = formatoHora.parse(horario);
                 
                 Mensagem mensagem = new Mensagem();
-                mensagem.setConteudo("");
+                mensagem.setConteudo(conteudo);
                 mensagem.setData(data);
                 mensagem.setHora(hora);
+                mensagem.setRemetenteNome(remetenteNome);
+                mensagem.setRemetenteId(null);
                 mensagem.setConversa(conversa);
                 mensagemRepo.save(mensagem);
                 return mensagem;

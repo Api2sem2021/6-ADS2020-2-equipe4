@@ -10,6 +10,6 @@ public interface ChatService {
     public Conversa buscarConversaPorId(Long id);
 
     public Mensagem enviarMensagem(Long chatId, String conteudo, String remetenteNome, String destinatarioNome,
-    Long remetenteId, Long destinatarioId);
+    Long remetenteId, Long destinatarioId,String horario);
     
 }

@@ -161,7 +161,8 @@ async function postAtividade() {
                 status: "1"
             }, {
                 headers: {
-                    "Access-Control-Allow-Origin": "*"
+                    "Access-Control-Allow-Origin": "*",
+                "Authorization": `Bearer ${this.$store.state.token}`
                 }
             }
         )

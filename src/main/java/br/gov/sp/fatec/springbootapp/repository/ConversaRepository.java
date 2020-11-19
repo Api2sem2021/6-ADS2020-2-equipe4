@@ -1,5 +1,7 @@
 package br.gov.sp.fatec.springbootapp.repository;
 
+import java.util.Set;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,4 +14,5 @@ public interface ConversaRepository extends JpaRepository<Conversa, Long> {
 
     @Query("select c from Conversa c where c.id=?1")
     public Conversa buscarPorId(Long id);
+
 }

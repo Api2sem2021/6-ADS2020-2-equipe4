@@ -27,38 +27,39 @@ public class Mensagem {
     @Column(name = "msg_id")
     private Long id;
 
-    @JsonView(View.MensagemResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @Column(name = "data")
     @Temporal(TemporalType.DATE)
     private Date data;
 
-    @JsonView(View.MensagemResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @Column(name = "hora")
     @Temporal(TemporalType.TIME)
     private Date hora;
 
-    @JsonView(View.MensagemResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @Column(name = "conteudo")
     private String conteudo;
 
-    @JsonView(View.MensagemResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @Column(name = "remetente_nome")
     private String remetenteNome;
 
-    @JsonView(View.MensagemResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @Column(name = "destinatario_nome")
     private String destinatarioNome;
 
-    @JsonView(View.MensagemResumo.class)
+    // @JsonView(View.MensagemResumo.class)
     @ManyToOne
     @JoinColumn(name = "remetente_id")
     private Usuario remetenteId;
 
-    @JsonView(View.MensagemResumo.class)
+    // @JsonView(View.MensagemResumo.class)
     @ManyToOne
     @JoinColumn(name = "destinatario_id")
     private Usuario destinatarioId;
 
+    @JsonView(View.MensagemResumo.class)
     @ManyToOne
     @JoinColumn(name = "chat_id")
     private Conversa conversa;

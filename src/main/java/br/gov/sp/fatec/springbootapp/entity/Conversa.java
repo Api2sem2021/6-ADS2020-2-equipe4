@@ -19,7 +19,7 @@ import br.gov.sp.fatec.springbootapp.controller.View;
 @Table(name = "conversas")
 public class Conversa {
 
-    @JsonView(View.MensagemResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_id")
@@ -30,8 +30,9 @@ public class Conversa {
 
     @Column(name = "status")
     private Integer status;
-
-    @OneToMany(mappedBy = "conversa",fetch = FetchType.LAZY)
+    
+    @JsonView(View.ConversaResumo.class)
+    @OneToMany(mappedBy = "conversa", fetch = FetchType.LAZY)
     private Set<Mensagem> mensagens;
 
     public Long getId() {

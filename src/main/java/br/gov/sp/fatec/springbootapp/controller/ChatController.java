@@ -1,5 +1,8 @@
 package br.gov.sp.fatec.springbootapp.controller;
 
+import java.util.Optional;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.gov.sp.fatec.springbootapp.entity.Conversa;
 import br.gov.sp.fatec.springbootapp.entity.Mensagem;
+import br.gov.sp.fatec.springbootapp.repository.MensagemRepository;
 import br.gov.sp.fatec.springbootapp.repository.UsuarioRepository;
 import br.gov.sp.fatec.springbootapp.service.ChatService;
 
@@ -28,6 +32,9 @@ public class ChatController {
     @Autowired
     ChatService chatService;
 
+    @Autowired
+    MensagemRepository mensagemRepo;
+
     @PostMapping(value = "/criarConversa")
     // @PreAuthorize("isAuthenticated()")
     public Conversa iniciarConversa() {
@@ -36,6 +43,7 @@ public class ChatController {
         return conversa;
     }
 
+    @JsonView(View.ConversaResumo.class )
     @GetMapping(value = "/buscarPorId")
     // @PreAuthorize("isAuthenticated()")
     public Conversa buscarConversaPorId(@RequestParam("id") String id) {
@@ -44,12 +52,27 @@ public class ChatController {
         return conversa;
     }
 
-    @JsonView({ View.MensagemResumo.class })
+    @JsonView(View.MensagemResumo.class)
     @PostMapping(value = "/enviarMensagem")
     public Mensagem enviarMensagem(@RequestBody ObjectNode body) {
-        Mensagem mensagem = chatService.enviarMensagem(body.get("id").asLong(), null,null,null,null,null);
+        Mensagem mensagem = chatService.enviarMensagem(body.get("id").asLong(), null,null,null,1L,null,null);
 
         return mensagem;
+    }
+
+    @JsonView(View.MensagemResumo.class)
+    @PostMapping(value = "/buscarMensagem")
+    public Mensagem buscarMensagem(@RequestBody ObjectNode body) {
+         Optional<Mensagem> mensagem = mensagemRepo.findById(body.get("id").asLong());
+
+        return mensagem.get();
+    }
+
+    @JsonView(View.MensagemResumo.class)
+    @GetMapping(value = "/buscarMensagemAtivas")
+    public Set<Mensagem> buscarMensagensAtivas() {
+
+        return mensagemRepo.buscarMensagensAtivas();
     }
 
 }
