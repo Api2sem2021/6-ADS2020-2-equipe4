@@ -1,21 +1,21 @@
 package br.gov.sp.fatec.springbootapp.service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import javax.transaction.Transactional;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import br.gov.sp.fatec.springbootapp.controller.View;
 import br.gov.sp.fatec.springbootapp.entity.Conversa;
 import br.gov.sp.fatec.springbootapp.entity.Mensagem;
-import br.gov.sp.fatec.springbootapp.entity.Usuario;
-import br.gov.sp.fatec.springbootapp.repository.UsuarioRepository;
+import br.gov.sp.fatec.springbootapp.exception.RegistroNaoEncontradoException;
 import br.gov.sp.fatec.springbootapp.repository.ConversaRepository;
 import br.gov.sp.fatec.springbootapp.repository.MensagemRepository;
+import br.gov.sp.fatec.springbootapp.repository.UsuarioRepository;
 
 @Service("chatService")
 public class ChatServiceImpl implements ChatService {
@@ -29,99 +29,56 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     MensagemRepository mensagemRepo;
 
-    @Override
-    @Transactional
-    public Conversa iniciarConversa(String nomeRemetente, String nomeDestinatario, String dataHora, String conteudo) {
-        Usuario remetente = usuarioRepo.findByNome(nomeRemetente);
-        Usuario destinatario = usuarioRepo.findByNome(nomeDestinatario);
+    SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
 
+    @Override
+    public Conversa iniciarConversa() {
         Conversa conversa = new Conversa();
-        conversa.setUsuarios(new HashSet<Usuario>());
 
-        // Adicionando a conversa para o Remetente
-        conversa.getUsuarios().add(remetente);
+        conversa.setStatus(0);
+        conversa.setAssumida(0);
+
         conversaRepo.save(conversa);
-        remetente.setConversas(new HashSet<Conversa>());
-        remetente.getConversas().add(conversa);
-
-        // Adicionando a conversa para o Destinatario
-        conversa.getUsuarios().add(destinatario);
-        conversaRepo.save(conversa);
-        destinatario.setConversas(new HashSet<Conversa>());
-        destinatario.getConversas().add(conversa);
-
-        Mensagem mensagem = new Mensagem();
-        mensagem.setConteudo(conteudo);
-        mensagem.setDataHora(dataHora);
-        mensagem.setConversa(conversa);
-        mensagem.setUsuarios(new HashSet<Usuario>());
-        mensagem.getUsuarios().add(remetente);
-        mensagem.setDestinatario(destinatario);
-        mensagemRepo.save(mensagem);
-
-        remetente.setMensagens(new HashSet<Mensagem>());
-        remetente.getMensagens().add(mensagem);
-        conversa.setMensagens(new HashSet<Mensagem>());
-        conversa.getMensagens().add(mensagem);
-        conversaRepo.save(conversa);
-        usuarioRepo.save(remetente);
-        usuarioRepo.save(destinatario);
-
         return conversa;
+
     }
 
     @Override
-    @Transactional
-    public Mensagem enviarMensagem(Long chatID, String nomeRemetente, String nomeDestinatario, String dataHora,
-            String conteudo) {
+    public Conversa buscarConversaPorId(Long id) throws RegistroNaoEncontradoException {
+        Conversa conversa = conversaRepo.buscarPorId(id);
 
-        Optional<Conversa> conversaOp = conversaRepo.findById(chatID);
-
-        if (conversaOp.isPresent()) {
-            Usuario remetente = usuarioRepo.findByNome(nomeRemetente);
-            Usuario destinatario = usuarioRepo.findByNome(nomeDestinatario);
-
-            Conversa conversa = conversaOp.get();
-
-            Mensagem mensagem = new Mensagem();
-            mensagem.setConteudo(conteudo);
-            mensagem.setDataHora(dataHora);
-            mensagem.setConversa(conversa);
-            mensagem.setUsuarios(new HashSet<Usuario>());
-            mensagem.getUsuarios().add(remetente);
-            mensagem.setDestinatario(destinatario);
-            mensagemRepo.save(mensagem);
-
-            conversa.setMensagens(new HashSet<Mensagem>());
-            conversa.getMensagens().add(mensagem);
-            conversaRepo.save(conversa);
-            remetente.setMensagens(new HashSet<Mensagem>());
-            remetente.getMensagens().add(mensagem);
-            usuarioRepo.save(remetente);
-
-            return mensagem;
+        if (conversa != null) {
+            return conversa;
         }
-       Conversa conversa =  iniciarConversa(nomeRemetente, nomeDestinatario, dataHora, conteudo);
-       Mensagem mensagem = conversa.getMensagens().iterator().next();
-
-       return mensagem;
+        throw new RegistroNaoEncontradoException("Conversa não encontrada para o id fornecido");
     }
 
     @Override
-    @Transactional
-    @Modifying
-    public void apagarConversa(Long chatID) {
-        conversaRepo.deleteById(chatID);
+    public Mensagem enviarMensagem(Long chatId, String conteudo, String remetenteNome, String destinatarioNome,
+    Long remetenteId, Long destinatarioId) {
+        Conversa conversa = conversaRepo.buscarPorId(chatId);
+
+        if (conversa != null) {
+            Date data;
+            Date hora;
+            try {
+                data = formatoData.parse("2017-11-15");
+                hora = formatoHora.parse("15:30:14");
+                
+                Mensagem mensagem = new Mensagem();
+                mensagem.setConteudo("");
+                mensagem.setData(data);
+                mensagem.setHora(hora);
+                mensagem.setConversa(conversa);
+                mensagemRepo.save(mensagem);
+                return mensagem;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            
+        }
+		return null;
     }
-
-    @Override
-    public Set<Mensagem> buscarMensagensPorIdConversa(Long conversaID) {
-        Optional<Conversa> conversaOp = conversaRepo.findById(conversaID);
-        Conversa conversa = conversaOp.get();
-
-        Set<Mensagem> mensagens = conversa.getMensagens();
-
-        return mensagens;
-    }
-
+    
 }

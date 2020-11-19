@@ -52,36 +52,26 @@ create table usr_atividades (
 
 create table conversas (
   chat_id bigint unsigned not null auto_increment,
+  assumida int,
+  status int not null,
   primary key (chat_id)
 );
 
-create table usuarios_conversas(
-  chat_id bigint unsigned not null,
-  usr_id bigint unsigned not null,
-  primary key (chat_id, usr_id),
-  foreign key chat_id_fk (chat_id) references conversas (chat_id) on delete restrict on update cascade,
-  foreign key usr_id_fk (usr_id) references usr_usuario (usr_id) on delete restrict on update cascade
-);
-
 create table mensagens(
-  mensagem_id bigint unsigned not null auto_increment,
+  msg_id bigint unsigned not null auto_increment,
   chat_id bigint unsigned not null,
-  destinatario bigint unsigned not null,
-  data_hora varchar(20) not null,
+  destinatario_id bigint unsigned,
+  destinatario_nome varchar(20),
+  remetente_id bigint unsigned,
+  remetente_nome varchar(20),
+  data date not null,
+  hora time not null,
   conteudo varchar(255) not null,
-  primary key (mensagem_id),
-  foreign key chat_id_fk (chat_id) references conversas (chat_id) on delete restrict on update cascade,
-  foreign key destinatario_fk (destinatario) references usr_usuario (usr_id) on delete restrict on update cascade
+  primary key (msg_id),
+  foreign key (chat_id) references conversas (chat_id) on delete restrict on update cascade,
+  foreign key (destinatario_id) references usr_usuario (usr_id),
+  foreign key (remetente_id) references usr_usuario (usr_id)
 );
-
-create table usuarios_mensagens(
-  mensagem_id bigint unsigned not null,
-  usr_id bigint unsigned not null,
-  primary key (mensagem_id, usr_id),
-  foreign key mensagem_id_fk (mensagem_id) references mensagens (mensagem_id) on delete restrict on update cascade,
-  foreign key usr_id_fk (usr_id) references usr_usuario (usr_id) on delete restrict on update cascade
-);
-
 
 insert into usr_usuario (usr_nome, usr_senha)
     values ('admin','$2a$10$i3.Z8Yv1Fwl0I5SNjdCGkOTRGQjGvHjh/gMZhdc3e7LIovAklqM6C');

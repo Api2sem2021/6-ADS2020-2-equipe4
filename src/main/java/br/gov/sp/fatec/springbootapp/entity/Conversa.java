@@ -2,14 +2,12 @@ package br.gov.sp.fatec.springbootapp.entity;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -21,19 +19,19 @@ import br.gov.sp.fatec.springbootapp.controller.View;
 @Table(name = "conversas")
 public class Conversa {
 
-    @JsonView({View.ConversaResumo.class,View.MensagemResumo.class})
+    @JsonView(View.MensagemResumo.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_id")
     private Long id;
 
-    @JsonView(View.ConversaResumo.class)
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "conversas")
-    private Set<Usuario> usuarios;
+    @Column(name = "assumida")
+    private Integer assumida;
 
-    @JsonView(View.ConversaResumo.class)
-    @OneToMany(mappedBy="conversa", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
+    @Column(name = "status")
+    private Integer status;
+
+    @OneToMany(mappedBy = "conversa",fetch = FetchType.LAZY)
     private Set<Mensagem> mensagens;
 
     public Long getId() {
@@ -44,12 +42,20 @@ public class Conversa {
         this.id = id;
     }
 
-    public Set<Usuario> getUsuarios() {
-        return usuarios;
+    public Integer getAssumida() {
+        return assumida;
     }
 
-    public void setUsuarios(Set<Usuario> usuarios) {
-        this.usuarios = usuarios;
+    public void setAssumida(Integer assumida) {
+        this.assumida = assumida;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Set<Mensagem> getMensagens() {

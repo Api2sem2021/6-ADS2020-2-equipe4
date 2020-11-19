@@ -63,7 +63,7 @@ create table mensagens(
   mensagem_id bigint unsigned not null auto_increment,
   chat_id bigint unsigned not null,
   destinatario bigint unsigned not null,
-  data_hora varchar(20) not null,
+  data_hora timestamp not null,
   conteudo varchar(255) not null,
   primary key (mensagem_id),
   foreign key chat_id_fk (chat_id) references conversas (chat_id) on delete restrict on update cascade,

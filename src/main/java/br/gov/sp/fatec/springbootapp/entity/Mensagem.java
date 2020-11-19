@@ -1,21 +1,17 @@
 package br.gov.sp.fatec.springbootapp.entity;
 
-import java.util.Set;
+import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -23,35 +19,49 @@ import br.gov.sp.fatec.springbootapp.controller.View;
 
 @Entity
 @Table(name = "mensagens")
-@SecondaryTable(name = "usr_usuario", pkJoinColumns = @PrimaryKeyJoinColumn(name = "usr_id"))
 public class Mensagem {
 
-    @JsonView({View.MensagemResumo.class,View.ConversaResumo.class})
+    @JsonView(View.ConversaResumo.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mensagem_id")
+    @Column(name = "msg_id")
     private Long id;
 
-    @JsonView({View.ConversaResumo.class, View.MensagemResumo.class})
-    @Column(name = "data_hora")
-    private String dataHora;
+    @JsonView(View.MensagemResumo.class)
+    @Column(name = "data")
+    @Temporal(TemporalType.DATE)
+    private Date data;
 
-    @JsonView({View.ConversaResumo.class, View.MensagemResumo.class})
+    @JsonView(View.MensagemResumo.class)
+    @Column(name = "hora")
+    @Temporal(TemporalType.TIME)
+    private Date hora;
+
+    @JsonView(View.MensagemResumo.class)
     @Column(name = "conteudo")
     private String conteudo;
 
-    @JsonView({View.MensagemResumo.class})
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "chat_id", nullable = false)
-    private Conversa conversa;
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "mensagens")
-    private Set<Usuario> usuarios;
+    @JsonView(View.MensagemResumo.class)
+    @Column(name = "remetente_nome")
+    private String remetenteNome;
 
     @JsonView(View.MensagemResumo.class)
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "destinatario")
-    private Usuario destinatario;
+    @Column(name = "destinatario_nome")
+    private String destinatarioNome;
+
+    @JsonView(View.MensagemResumo.class)
+    @ManyToOne
+    @JoinColumn(name = "remetente_id")
+    private Usuario remetenteId;
+
+    @JsonView(View.MensagemResumo.class)
+    @ManyToOne
+    @JoinColumn(name = "destinatario_id")
+    private Usuario destinatarioId;
+
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private Conversa conversa;
 
     public Long getId() {
         return id;
@@ -61,13 +71,6 @@ public class Mensagem {
         this.id = id;
     }
 
-    public String getDataHora() {
-        return dataHora;
-    }
-
-    public void setDataHora(String dataHora) {
-        this.dataHora = dataHora;
-    }
 
     public String getConteudo() {
         return conteudo;
@@ -77,6 +80,54 @@ public class Mensagem {
         this.conteudo = conteudo;
     }
 
+    public String getRemetenteNome() {
+        return remetenteNome;
+    }
+
+    public void setRemetenteNome(String remetenteNome) {
+        this.remetenteNome = remetenteNome;
+    }
+
+    public String getDestinatarioNome() {
+        return destinatarioNome;
+    }
+
+    public void setDestinatarioNome(String destinatarioNome) {
+        this.destinatarioNome = destinatarioNome;
+    }
+
+    public Usuario getRemetenteId() {
+        return remetenteId;
+    }
+
+    public void setRemetenteId(Usuario remetenteId) {
+        this.remetenteId = remetenteId;
+    }
+
+    public Usuario getDestinatarioId() {
+        return destinatarioId;
+    }
+
+    public void setDestinatarioId(Usuario destinatarioId) {
+        this.destinatarioId = destinatarioId;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
+
+    public Date getHora() {
+        return hora;
+    }
+
+    public void setHora(Date hora) {
+        this.hora = hora;
+    }
+
     public Conversa getConversa() {
         return conversa;
     }
@@ -84,23 +135,6 @@ public class Mensagem {
     public void setConversa(Conversa conversa) {
         this.conversa = conversa;
     }
-
-    public Set<Usuario> getUsuarios() {
-        return usuarios;
-    }
-
-    public void setUsuarios(Set<Usuario> usuarios) {
-        this.usuarios = usuarios;
-    }
-
-    public Usuario getDestinatario() {
-        return destinatario;
-    }
-
-    public void setDestinatario(Usuario destinatario) {
-        this.destinatario = destinatario;
-    }
-    
 
 
 }

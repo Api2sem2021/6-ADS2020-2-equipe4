@@ -1,5 +1,6 @@
 package br.gov.sp.fatec.springbootapp.entity;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -12,14 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
 import br.gov.sp.fatec.springbootapp.controller.View;
-
-import java.io.Serializable;
 
 @Entity
 @Table(name = "usr_usuario")
@@ -49,19 +47,6 @@ public class Usuario implements Serializable {
     @JoinTable(name = "uau_usuario_autorizacao", joinColumns = { @JoinColumn(name = "usr_id") }, inverseJoinColumns = {
             @JoinColumn(name = "aut_id") })
     private Set<Autorizacao> autorizacoes;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "usuarios_conversas", joinColumns = { @JoinColumn(name = "usr_id") }, inverseJoinColumns = {
-            @JoinColumn(name = "chat_id") })
-    private Set<Conversa> conversas;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "usuarios_mensagens", joinColumns = { @JoinColumn(name = "usr_id") }, inverseJoinColumns = {
-            @JoinColumn(name = "mensagem_id") })
-    private Set<Mensagem> mensagens;
-
-    @OneToOne(mappedBy = "destinatario")
-    private Mensagem mensagem;
     
     @OneToMany(mappedBy = "atvRemetente",fetch = FetchType.LAZY)
     private Set<Atividade> atividadesEnviadas;
@@ -70,8 +55,19 @@ public class Usuario implements Serializable {
     @OneToMany(mappedBy = "atvDestinatario", fetch = FetchType.LAZY)
     private Set<Atividade> atividadesRecebidas;
 
+    @OneToMany(mappedBy = "remetenteId",fetch = FetchType.LAZY)
+    private Set<Mensagem> mensagensEnviadas;
+    
+    
+    @OneToMany(mappedBy = "destinatarioId", fetch = FetchType.LAZY)
+    private Set<Mensagem> mensagensRecebidas;
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(Long id) {
@@ -79,7 +75,7 @@ public class Usuario implements Serializable {
     }
 
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     public void setNome(String nome) {
@@ -87,7 +83,7 @@ public class Usuario implements Serializable {
     }
 
     public String getAvatar() {
-        return this.avatar;
+        return avatar;
     }
 
     public void setAvatar(String avatar) {
@@ -95,7 +91,7 @@ public class Usuario implements Serializable {
     }
 
     public String getSenha() {
-        return this.senha;
+        return senha;
     }
 
     public void setSenha(String senha) {
@@ -103,40 +99,11 @@ public class Usuario implements Serializable {
     }
 
     public Set<Autorizacao> getAutorizacoes() {
-        return this.autorizacoes;
+        return autorizacoes;
     }
 
     public void setAutorizacoes(Set<Autorizacao> autorizacoes) {
         this.autorizacoes = autorizacoes;
-    }
-
-
-    public Set<Conversa> getConversas() {
-        return conversas;
-    }
-
-    public void setConversas(Set<Conversa> conversas) {
-        this.conversas = conversas;
-    }
-
-    public Set<Mensagem> getMensagens() {
-        return mensagens;
-    }
-
-    public void setMensagens(Set<Mensagem> mensagens) {
-        this.mensagens = mensagens;
-    }
-
-    public Mensagem getMensagem() {
-        return mensagem;
-    }
-
-    public void setMensagem(Mensagem mensagem) {
-        this.mensagem = mensagem;
-    }
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
     }
 
     public Set<Atividade> getAtividadesEnviadas() {
@@ -153,6 +120,22 @@ public class Usuario implements Serializable {
 
     public void setAtividadesRecebidas(Set<Atividade> atividadesRecebidas) {
         this.atividadesRecebidas = atividadesRecebidas;
+    }
+
+    public Set<Mensagem> getMensagensEnviadas() {
+        return mensagensEnviadas;
+    }
+
+    public void setMensagensEnviadas(Set<Mensagem> mensagensEnviadas) {
+        this.mensagensEnviadas = mensagensEnviadas;
+    }
+
+    public Set<Mensagem> getMensagensRecebidas() {
+        return mensagensRecebidas;
+    }
+
+    public void setMensagensRecebidas(Set<Mensagem> mensagensRecebidas) {
+        this.mensagensRecebidas = mensagensRecebidas;
     }
 
 }
