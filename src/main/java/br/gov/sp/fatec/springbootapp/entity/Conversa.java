@@ -32,7 +32,7 @@ public class Conversa {
     private Integer status;
     
     @JsonView(View.ConversaResumo.class)
-    @OneToMany(mappedBy = "conversa", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "conversa", fetch = FetchType.EAGER)
     private Set<Mensagem> mensagens;
 
     public Long getId() {
