@@ -37,8 +37,16 @@ public class ChatController {
 
     @PostMapping(value = "/criarConversa")
     // @PreAuthorize("isAuthenticated()")
-    public Conversa iniciarConversa() {
-        Conversa conversa = chatService.iniciarConversa();
+    public Conversa iniciarConversa(@RequestBody ObjectNode body) {
+        Conversa conversa = chatService.iniciarConversa(body.get("status").asInt());
+
+        return conversa;
+    }
+
+    @PostMapping(value = "/alterarStatus")
+    // @PreAuthorize("isAuthenticated()")
+    public Conversa alterarStatus(@RequestBody ObjectNode body) {
+        Conversa conversa = chatService.alterarStatusConversa(body.get("id").asLong(), body.get("status").asInt());
 
         return conversa;
     }
@@ -48,14 +56,23 @@ public class ChatController {
     // @PreAuthorize("isAuthenticated()")
     public Conversa buscarConversaPorId(@RequestParam("id") String id) {
         Conversa conversa = chatService.buscarConversaPorId(new Long(id));
-
+        
         return conversa;
+    }
+
+    @JsonView(View.ConversaResumo.class)
+    @GetMapping(value = "/buscarConversasPorStatus")
+    public Set<Conversa> buscarConversasAtivas(@RequestParam("status") String status) {
+         Set<Conversa> conversas = chatService.buscarConversaPorStatus(new Integer(status));
+
+         return conversas;
+        
     }
 
     @JsonView(View.MensagemResumo.class)
     @PostMapping(value = "/enviarMensagem")
     public Mensagem enviarMensagem(@RequestBody ObjectNode body) {
-        Mensagem mensagem = chatService.enviarMensagem(body.get("id").asLong(), null,null,null,1L,null,null);
+        Mensagem mensagem = chatService.enviarMensagem(body.get("id").asLong(), null,null,null,1L,null,null,null);
 
         return mensagem;
     }
@@ -67,6 +84,7 @@ public class ChatController {
 
         return mensagem.get();
     }
+
 
     @JsonView(View.MensagemResumo.class)
     @GetMapping(value = "/buscarMensagemAtivas")

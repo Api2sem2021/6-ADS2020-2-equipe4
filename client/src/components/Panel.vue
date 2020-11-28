@@ -16,14 +16,14 @@
             <li id="li_chats">
                 <a href="/panel?url=chats"><i class="material-icons">chats</i>Conversas Internas</a>
             </li>
+            <li id="li_live_chats">
+                <a href="/panel?url=live_chats"><i class="material-icons">record_voice_over</i>Conversas widget</a>
+            </li>
             <li id="li_history">
                 <a href="/panel?url=history"><i class="material-icons">history</i>Histórico</a>
             </li>
             <li id="li_employes">
                 <a href="/panel?url=employes"><i class="material-icons">group</i>Funcionarios</a>
-            </li>
-            <li id="li_live_chats">
-                <a href="/panel?url=live_chats"><i class="material-icons">record_voice_over</i>Conversas ao vivo</a>
             </li>
         </ul>
 

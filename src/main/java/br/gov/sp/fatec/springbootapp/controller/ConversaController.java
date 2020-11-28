@@ -1,6 +1,5 @@
 package br.gov.sp.fatec.springbootapp.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -26,12 +25,30 @@ public class ConversaController {
 
     @MessageMapping("/messageHandler")
     public void greeting(@RequestBody ObjectNode body) throws Exception {
-        Mensagem mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(),
-                body.get("nomeRemetente").asText(), null, 1L, null, body.get("hora").asText());
+        Mensagem mensagem = new Mensagem();
+        String origem = body.get("origem").asText();
+
+        Long destinarioID = null;
+        Long remetenteID = null;
+        if(body.get("destinatarioID").isValueNode() )destinarioID = body.get("destinatarioID").asLong();
+        if(body.get("remetenteID").isValueNode()) remetenteID = body.get("remetenteID").asLong(); 
+
+        if (origem.equals("widget")) {
+            mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(),
+                    body.get("nomeRemetente").asText(), null, null, null, body.get("data").asText(),
+                    body.get("hora").asText());
+        } else {
+            mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(), null,
+                    body.get("destinatarioNome").asText(), remetenteID,
+                    destinarioID, body.get("data").asText(), body.get("hora").asText());
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         String serializedJson = mapper.writerWithView(View.MensagemResumo.class).writeValueAsString(mensagem);
+
         messagingTemplate.convertAndSendToUser(body.get("id").asText(), "/queue/messages", serializedJson);
+        messagingTemplate.convertAndSend("/user/queue/messages", serializedJson);
+
     }
 
 }

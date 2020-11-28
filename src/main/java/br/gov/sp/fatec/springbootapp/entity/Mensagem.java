@@ -22,7 +22,7 @@ import br.gov.sp.fatec.springbootapp.controller.View;
 @Table(name = "mensagens")
 public class Mensagem {
 
-    @JsonView(View.ConversaResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "msg_id")
