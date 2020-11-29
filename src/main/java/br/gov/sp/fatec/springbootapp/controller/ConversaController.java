@@ -38,7 +38,7 @@ public class ConversaController {
                     body.get("nomeRemetente").asText(), null, null, null, body.get("data").asText(),
                     body.get("hora").asText());
         } else {
-            mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(), null,
+            mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(), body.get("nomeRemetente").asText(),
                     body.get("destinatarioNome").asText(), remetenteID,
                     destinarioID, body.get("data").asText(), body.get("hora").asText());
         }

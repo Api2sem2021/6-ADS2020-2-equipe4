@@ -5,12 +5,17 @@
         <div class="card-content">
           <div class="row" style="height: 500px">
             <div class="blue-grey lighten-1 col s12 m4 l4" style="height: 500px">
-              <div class="green lighten-1 white-text z-depth-2" style="margin: 10px">
-                <div style="padding: 10px">
-                  <span class="card-title center-align"><i class="material-icons">arrow_downward</i>Conversas Widget</span>
-                  <p class="center-align">As conversas listadas abaixo tem como sua origem o widget flutuante</p>
+              <nav>
+                <div class="nav-wrapper green lighten-1" style="margin-top: 5px">
+                  <form>
+                    <div class="input-field">
+                      <input id="search" type="search" required placeholder="Buscar por nome"/>
+                      <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                      <i class="material-icons">close</i>
+                    </div>
+                  </form>
                 </div>
-              </div>
+              </nav>
               <ul class="collection z-depth-2">
                 <li class="collection-item avatar pop" v-for="(conversa, key) in conversas" v-bind:key="conversa.id" v-bind:id="key" v-on:click="() => this.changeConversa(conversa, key)" v-bind:class="{ liAactive: this.conversaSelecionadaID === conversa.id }">
                   <i class="large material-icons circle blue z-depth-2">person</i>
@@ -26,11 +31,6 @@
             <nav class="col s12 m8 l8 green lighten-1">
               <div class="nav-wrapper">
                 <a href="#!" class="brand-logo"><i class="material-icons">person</i>{{ conversaNome }}</a>
-                <ul class="right hide-on-med-and-down">
-                  <li>
-                    <a class="waves-effect waves-light btn red" v-on:click="finalizarConversa(this.conversaSelecionadaID, this.conversaSelecionadaKey)">Finalizar conversa <i class="material-icons left">close</i></a>
-                  </li>
-                </ul>
               </div>
             </nav>
             <div class="col s12 m8 l8" style="padding: 0px !important">
@@ -41,7 +41,6 @@
                       <p class="left-align">
                         {{ mensagem.conteudo }}
                       </p>
-
                       <p class="right-align green-text lighten-1">
                         {{ mensagem.hora.slice(0, 5) }}
                       </p>
@@ -64,7 +63,6 @@
                   <input v-model="mensagem" type="text" class="validate white-text" />
                   <label for="search" class="white-text">Digite a sua mensagem</label>
                 </div>
-
                 <a class="col s4 btn-large waves-effect green lighten-1" style="margin-top: 5px" v-on:click="sendMessage()"><i class="material-icons left">send</i>Enviar</a>
               </div>
             </div>
@@ -86,7 +84,7 @@ import utils from "../utils";
 var stompClient;
 var socket;
 export default {
-  name: "Chat",
+  name: "InternalChat",
   data() {
     return {
       conversasID: [],
@@ -180,20 +178,19 @@ export default {
       });
     },
     async finalizarConversa(id, key) {
-        this.mensagem = "Conversa finalizada";
-        this.sendMessage();
-        await axios.post(`${this.$store.state.apiUrl}/chat/alterarStatus`, { id, status: 1 }).then(() => {
-          document.getElementById(key).classList.add("popOut");
-          M.toast({ html: "Conversa finalizada" });
-          setTimeout(() => {
-            this.conversas.splice(key, 1);
-          }, 500);
-          setTimeout(() => {
-            this.clearConversa();
-          }, 500);
-          
-        });
-        return;
+      this.mensagem = "Conversa finalizada";
+      this.sendMessage();
+      await axios.post(`${this.$store.state.apiUrl}/chat/alterarStatus`, { id, status: 1 }).then(() => {
+        document.getElementById(key).classList.add("popOut");
+        M.toast({ html: "Conversa finalizada" });
+        setTimeout(() => {
+          this.conversas.splice(key, 1);
+        }, 500);
+        setTimeout(() => {
+          this.clearConversa();
+        }, 500);
+      });
+      return;
     },
   },
   async beforeMount() {

@@ -17,6 +17,10 @@ var _Chat = _interopRequireDefault(require("./components/Chat.vue"));
 
 var _Employes = _interopRequireDefault(require("./components/Employes.vue"));
 
+var _History = _interopRequireDefault(require("./components/History.vue"));
+
+var _InternalChat = _interopRequireDefault(require("./components/InternalChat.vue"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var routes = [{
@@ -39,6 +43,14 @@ var routes = [{
     path: '/panel/employes',
     name: 'Employes',
     component: _Employes["default"]
+  }, {
+    path: '/panel/history',
+    name: 'History',
+    component: _History["default"]
+  }, {
+    path: '/panel/internalChat',
+    name: 'InternalChat',
+    component: _InternalChat["default"]
   }]
 }, {
   path: '/',

@@ -16,13 +16,13 @@
           <a href="/panel/activities" class="waves-effect waves-light"><i class="material-icons">notifications</i>Atividades<span class="new badge red" data-badge-caption="novas">11</span></a>
         </li>
         <li id="li_chats">
-          <a href="/panel?url=chats"><i class="material-icons">chats</i>Conversas Internas</a>
+          <a href='/panel/internalChat'><i class="material-icons">chats</i>Conversas Internas</a>
         </li>
         <li id="li_live_chats">
           <a href="/panel/live_chats"><i class="material-icons">record_voice_over</i>Conversas widget</a>
         </li>
         <li id="li_history">
-          <a href="/panel?url=history"><i class="material-icons">history</i>Histórico</a>
+          <a href="/panel/history"><i class="material-icons">history</i>Histórico</a>
         </li>
         <li id="li_employes">
           <a href="/panel/employes"><i class="material-icons">group</i>Funcionarios</a>

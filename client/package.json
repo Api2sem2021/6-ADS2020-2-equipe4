@@ -12,6 +12,8 @@
     "core-js": "^3.6.5",
     "material-design-icons": "^3.0.1",
     "materialize-css": "^1.0.0-rc.2",
+    "primeicons": "^4.1.0",
+    "primevue": "^3.0.0",
     "sockjs-client": "^1.5.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-beta.13",

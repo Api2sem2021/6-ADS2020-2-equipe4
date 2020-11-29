@@ -4,6 +4,8 @@ import Panel from './components/Panel.vue';
 import Notifications from './components/Notifications.vue';
 import Chat from './components/Chat.vue';
 import Employes from './components/Employes.vue';
+import History from './components/History.vue'
+import InternalChat from './components/InternalChat.vue'
 
 const routes = [
     {
@@ -30,6 +32,16 @@ const routes = [
                 path: '/panel/employes',
                 name: 'Employes',
                 component: Employes
+            },
+            {
+                path: '/panel/history',
+                name: 'History',
+                component: History
+            },
+            {
+                path: '/panel/internalChat',
+                name: 'InternalChat',
+                component: InternalChat
             }
         ]
     },
