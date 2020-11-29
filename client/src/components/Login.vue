@@ -58,8 +58,6 @@ import axios from "axios";
 import M from "materialize-css";
 
 function login() {
-    // let name = document.getElementById("name").value;
-    // let password = document.getElementById("password").value;
     axios
         .post(
             `http://localhost:8081/spring-app/login`, {
@@ -76,8 +74,6 @@ function login() {
             console.log(usuario.token)
             sessionStorage.setItem("token", usuario.token);
             this.$store.state.token = usuario.token
-            // this.name = this.password = "";
-            // window.location.reload();
 
             await axios.get(`http://localhost:8081/spring-app/usuario/nome?nome=${usuario.username}`, {
                 headers: {

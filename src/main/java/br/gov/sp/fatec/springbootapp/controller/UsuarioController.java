@@ -65,7 +65,7 @@ public class UsuarioController {
     @JsonView(View.UsuarioResumo.class)
     @PostMapping
     public ResponseEntity<Usuario> criarUsuario(@RequestBody Usuario usuario, UriComponentsBuilder uriComponentsBuilder){
-        usuario = segService.criarUsuario(usuario.getNome(),usuario.getSenha(), "ROLE_USUARIO");
+        usuario = segService.criarUsuario(usuario.getNome(),usuario.getSenha(), "ROLE_USUARIO",usuario.getAvatar());
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setLocation(
             uriComponentsBuilder.path(

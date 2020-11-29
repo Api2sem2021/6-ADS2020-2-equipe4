@@ -35,7 +35,8 @@ public class Usuario implements Serializable {
             View.MensagemResumo.class, View.AtividadeResumo.class })
     @Column(name = "usr_nome")
     private String nome;
-
+    
+    @JsonView(View.UsuarioResumo.class)
     @Column(name = "usr_avatar", columnDefinition = "TEXT")
     private String avatar;
 

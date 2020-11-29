@@ -35,7 +35,7 @@ public class SegurancaServiceImpl implements SegurancaService {
     private PasswordEncoder passEncoder;
 
     @Transactional
-    public Usuario criarUsuario(String nome, String senha, String autorizacao) {
+    public Usuario criarUsuario(String nome, String senha, String autorizacao,String avatar) {
 
         Autorizacao aut = autRepo.findByNome(autorizacao);
         if (aut == null) {
@@ -46,6 +46,7 @@ public class SegurancaServiceImpl implements SegurancaService {
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
         usuario.setSenha(passEncoder.encode(senha));
+        usuario.setAvatar(avatar);
         usuario.setAutorizacoes(new HashSet<Autorizacao>());
         usuario.getAutorizacoes().add(aut);
         usuarioRepo.save(usuario);
@@ -53,7 +54,7 @@ public class SegurancaServiceImpl implements SegurancaService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')") // está autenticado, param entrada
+    @PreAuthorize("isAuthenticated()") // está autenticado, param entrada
     public List<Usuario> buscarTodosUsuarios() {
         return usuarioRepo.findAll();
 

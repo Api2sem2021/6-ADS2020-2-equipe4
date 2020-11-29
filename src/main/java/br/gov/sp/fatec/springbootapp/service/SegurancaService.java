@@ -9,7 +9,7 @@ import br.gov.sp.fatec.springbootapp.entity.Usuario;
 
 public interface SegurancaService extends UserDetailsService{
 
-    public Usuario criarUsuario(String nome, String senha, String autorizacao);
+    public Usuario criarUsuario(String nome, String senha, String autorizacao, String avatar);
 
     public List<Usuario> buscarTodosUsuarios();
 

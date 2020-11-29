@@ -1,7 +1,7 @@
 <template>
   <div>
-    <header style="padding-left: 300px">
-      <ul id="mobile-nav" class="sidenav sidenav-fixed lateral-sidenav">
+    <header class="blue-grey darken-1" style="padding-left: 300px">
+      <ul id="mobile-nav" class="sidenav sidenav-fixed lateral-sidenav blue-grey darken-1">
         <li>
           <div class="user-view">
             <div class="background green lighten-1"></div>
@@ -12,20 +12,51 @@
             <a href="#email"><span class="white-text email">Diretor</span></a>
           </div>
         </li>
-        <li id="li_notifications">
-          <a href="/panel/activities" class="waves-effect waves-light"><i class="material-icons">notifications</i>Atividades<span class="new badge red" data-badge-caption="novas">11</span></a>
+        <li
+          v-on:click="
+            $store.commit('setSection', 'activities');
+            navigate('/panel/activities');
+          "
+          class="white-text"
+          v-bind:class="{ menuActive: $store.getters.getSection == 'activities' }"
+        >
+          <a class="waves-effect waves-light white-text"> <i class="material-icons white-text">notifications</i>Atividades<span class="new badge red" data-badge-caption="novas">11</span></a>
         </li>
-        <li id="li_chats">
-          <a href='/panel/internalChat'><i class="material-icons">chats</i>Conversas Internas</a>
+        <li
+          v-on:click="
+            $store.commit('setSection', 'internalChat');
+            navigate('/panel/internalChat');
+          "
+          v-bind:class="{ menuActive: $store.getters.getSection == 'internalChat' }"
+        >
+          <a class="white-text"> <i class="material-icons white-text">chats</i>Conversas Internas</a>
         </li>
-        <li id="li_live_chats">
-          <a href="/panel/live_chats"><i class="material-icons">record_voice_over</i>Conversas widget</a>
+        <li
+          v-on:click="
+            $store.commit('setSection', 'live_chats');
+            navigate('/panel/live_chats');
+          "
+          v-bind:class="{ menuActive: $store.getters.getSection == 'live_chats' }"
+        >
+          <a class="white-text"> <i class="material-icons white-text">record_voice_over</i>Conversas widget</a>
         </li>
-        <li id="li_history">
-          <a href="/panel/history"><i class="material-icons">history</i>Histórico</a>
+        <li
+          v-on:click="
+            $store.commit('setSection', 'history');
+            navigate('/panel/history');
+          "
+          v-bind:class="{ menuActive: $store.getters.getSection == 'history' }"
+        >
+          <a class="white-text"> <i class="material-icons white-text">history</i>Histórico</a>
         </li>
-        <li id="li_employes">
-          <a href="/panel/employes"><i class="material-icons">group</i>Funcionarios</a>
+        <li
+          v-on:click="
+            $store.commit('setSection', 'employes');
+            navigate('/panel/employes');
+          "
+          v-bind:class="{ menuActive: $store.getters.getSection == 'employes' }"
+        >
+          <a class="white-text"> <i class="material-icons white-text">group</i>Funcionarios</a>
         </li>
       </ul>
 
@@ -40,7 +71,7 @@
 
     <div class="teste">
       <nav>
-        <div class="nav-wrapper blue-grey lighten-3">
+        <div class="nav-wrapper blue-grey darken-1">
           <a href="#" class="brand-logo center"> <img style="width: 100%" src="../assets/logo.png" /></a>
           <ul class="left hide-on-large">
             <li>
@@ -95,7 +126,13 @@ function logout() {
 export default {
   name: "Panel",
   methods: {
-    logout,
+    logout() {
+      sessionStorage.removeItem("usuario");
+      this.$router.push('/');
+    },
+    navigate(path) {
+      this.$router.push(path);
+    },
   },
   data() {
     return {
@@ -105,10 +142,16 @@ export default {
   },
 };
 </script>
-'
 
 <style>
 body {
   background: white;
+}
+textarea.materialize-textarea:focus {
+  border-bottom: 1px solid #66bb6a !important;
+}
+.menuActive {
+  border-right: 10px solid #66bb6a;
+  background-color: rgba(133, 131, 131, 0.692) !important;
 }
 </style>
