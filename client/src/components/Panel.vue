@@ -13,6 +13,7 @@
           </div>
         </li>
         <li
+          style="cursor:pointer"
           v-on:click="
             $store.commit('setSection', 'activities');
             navigate('/panel/activities');
@@ -20,9 +21,10 @@
           class="white-text"
           v-bind:class="{ menuActive: $store.getters.getSection == 'activities' }"
         >
-          <a class="waves-effect waves-light white-text"> <i class="material-icons white-text">notifications</i>Atividades<span class="new badge red" data-badge-caption="novas">11</span></a>
+          <a class="waves-effect waves-light white-text"> <i class="material-icons white-text">notifications</i>Atividades<span class="new badge red" data-badge-caption="abertas">11</span></a>
         </li>
         <li
+          style="cursor:pointer"
           v-on:click="
             $store.commit('setSection', 'internalChat');
             navigate('/panel/internalChat');
@@ -32,6 +34,7 @@
           <a class="white-text"> <i class="material-icons white-text">chats</i>Conversas Internas</a>
         </li>
         <li
+          style="cursor:pointer"
           v-on:click="
             $store.commit('setSection', 'live_chats');
             navigate('/panel/live_chats');
@@ -41,6 +44,7 @@
           <a class="white-text"> <i class="material-icons white-text">record_voice_over</i>Conversas widget</a>
         </li>
         <li
+          style="cursor:pointer"
           v-on:click="
             $store.commit('setSection', 'history');
             navigate('/panel/history');
@@ -50,6 +54,7 @@
           <a class="white-text"> <i class="material-icons white-text">history</i>Histórico</a>
         </li>
         <li
+          style="cursor:pointer"
           v-on:click="
             $store.commit('setSection', 'employes');
             navigate('/panel/employes');
@@ -116,30 +121,23 @@ if (sessionStorage.usuario) {
   usuario = JSON.parse(sessionStorage.usuario);
 }
 
-let location = window.location.search;
-
-function logout() {
-  sessionStorage.removeItem("usuario");
-  window.location.reload();
-}
-
 export default {
   name: "Panel",
+  data() {
+    return {
+      usuario,
+    };
+  },
   methods: {
     logout() {
       sessionStorage.removeItem("usuario");
-      this.$router.push('/');
+      this.$router.go('/');
     },
     navigate(path) {
       this.$router.push(path);
     },
   },
-  data() {
-    return {
-      usuario,
-      location,
-    };
-  },
+  
 };
 </script>
 
@@ -152,6 +150,6 @@ textarea.materialize-textarea:focus {
 }
 .menuActive {
   border-right: 10px solid #66bb6a;
-  background-color: rgba(133, 131, 131, 0.692) !important;
+  background-color: #78909c !important;
 }
 </style>

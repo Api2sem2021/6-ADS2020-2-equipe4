@@ -7,31 +7,32 @@
             <span class="card-title" style="padding-block: 5px"><i class="material-icons">group</i> Funcionários</span>
             <div class="row blue-grey">
               <div class="container">
-                <form class="col s12 center-align">
+                <div class="col s12 center-align">
                   <div class="row">
-                    <div class="input-field col s12">
+                    <div class="input-field col s10">
                       <i class="material-icons prefix">search</i>
-                      <input id="first_name" type="text" class="validate">
+                      <input v-model="nomeBusca" v-on:keyup.enter="filter_hub()" type="text" class="validate" />
                       <label for="icon_prefix2" class="white-text">Pesquisar</label>
                       <span class="left-align helper-text white-text">Buscar por nome</span>
                     </div>
+                    <a v-on:click="filter_hub()" style="margin-top: 20px" class="btn small col s2 green"><i class="material-icons">search</i></a>
                     <p class="col s6">
                       <label>
-                        <input class="red" type="checkbox" />
+                        <input class="red" type="checkbox" v-model="permissoes" value="Diretores" v-on:change="filter_hub()" />
                         <span class="white-text">Diretores</span>
                       </label>
                     </p>
                     <p class="col s6">
                       <label>
-                        <input type="checkbox" />
+                        <input type="checkbox" v-model="permissoes" value="Atendentes" v-on:change="filter_hub()"/>
                         <span class="white-text">Atendentes</span>
                       </label>
                     </p>
                   </div>
-                </form>
+                </div>
               </div>
 
-              <div v-for="(usuario, key) in usuarios" v-bind:key="usuario.id" v-bind:id="key">
+              <div v-for="(usuario, key) in usuariosFiltrados" v-bind:key="usuario.id" v-bind:id="key">
                 <div v-if="this.$store.getters.getUsuario.id != usuario.id" class="col s12 m3 black-text pop hoverable" style="cursor: pointer">
                   <div
                     class="card horizontal modal-trigger"
@@ -139,6 +140,8 @@ export default {
       atividadeTitulo: "",
       atividadeConteudo: "",
       dataAgendamento: "",
+      nomeBusca: "",
+      permissoes: []
     };
   },
   methods: {
@@ -197,24 +200,55 @@ export default {
         });
     },
     buscarPorNome() {
-      let searchInput = document.getElementById("search_title").value;
-
-      let atividadesFiltradasTitulo = [];
-      if (searchInput && searchInput != "") {
-        this.atividadesFiltradas.forEach((atividade) => {
-          console.log(atividade);
-          if (atividade.titulo.toLowerCase().includes(searchInput.toLowerCase())) {
-            atividadesFiltradasTitulo.push(atividade);
+      let usuariosFiltradosPorNome = [];
+      if (this.nomeBusca && this.nomeBusca != "") {
+        this.usuariosFiltrados.forEach((usuario) => {
+          if (usuario.nome.toLowerCase().includes(this.nomeBusca.toLowerCase())) {
+            usuariosFiltradosPorNome.push(usuario);
           }
         });
-        this.atividadesFiltradas = atividadesFiltradasTitulo;
+        this.usuariosFiltrados = usuariosFiltradosPorNome;
         return;
       }
       return;
     },
+    buscarUsuariosPorPermissoes() {
+      let usuariosFiltradosPermissao = [];
+      if (this.permissoes.indexOf("Diretores") != -1 || this.permissoes.indexOf("Atendentes") != -1) {
+
+        if (this.permissoes.indexOf("Diretores") != -1) {
+          this.usuariosFiltrados.forEach((usuario) => {
+            if (usuario.autorizacoes[0].nome == "ROLE_ADMIN") {
+              usuariosFiltradosPermissao.push(usuario);
+            }
+          });
+        }
+
+        if (this.permissoes.indexOf("Atendentes") != -1) {
+          this.usuariosFiltradosPermissao.forEach((usuario) => {
+            if (usuario.autorizacoes[0].nome == "ROLE_USUARIO") {
+              usuariosFiltradosPermissao.push(usuario);
+            }
+          });
+        }
+
+        this.usuariosFiltrados = usuariosFiltradosPermissao;
+      }
+    },
+    filter_hub() {
+      this.usuariosFiltrados = this.usuarios;
+
+      if (this.nomeBusca && this.nomeBusca != "") {
+        this.buscarPorNome();
+      }
+      if (this.permissoes.length >= 1) {
+        this.buscarUsuariosPorPermissoes();
+      }
+    }
   },
   async beforeMount() {
     await this.buscarUsuarios();
+    this.usuariosFiltrados = this.usuarios
   },
   mounted() {
     let calendar_options = {

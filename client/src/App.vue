@@ -110,7 +110,7 @@ body {
 [type="checkbox"]:checked+span:not(.lever):before {
     border-right: 2px solid #66bb6a;
     border-bottom: 2px solid #66bb6a;
-}
+}a
 
 input:focus {
     border-bottom: 1px solid #66bb6a !important;

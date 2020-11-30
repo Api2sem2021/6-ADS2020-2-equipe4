@@ -46,8 +46,9 @@ const routes = [
         ]
     },
     {
-        path: '/', redirect: { path: '/panel/activities' }
-    }
+        path: '/', redirect: { path: '/panel/activities' },
+    },
+    { path: '/panel', redirect: { path: '/panel/activities' } }
 
 ];
 
@@ -61,6 +62,7 @@ router.beforeEach((to, from, next) => {
 
     else if (to.name == 'Login' && sessionStorage.usuario) { next({ path: '/panel/activities' }) }
 
+    else if (to.name == 'Panel') { next({ path: '/panel/activities' }) }
     else next();
 })
 

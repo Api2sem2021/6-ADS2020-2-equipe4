@@ -1,19 +1,16 @@
 <template>
   <div class="row">
-    <div class="">
       <div class="col s12">
         <div class="card blue-grey darken-1 pop">
           <div class="card-content white-text">
             <span class="card-title" style="padding-block: 5px"><i class="material-icons">history</i> Histórico</span>
             <nav>
               <div class="nav-wrapper green lighten-1">
-                <form>
                   <div class="input-field">
-                    <input placeholder="Buscar por nome do cliente" id="search" type="search" required />
+                    <input placeholder="Buscar por nome do cliente"  v-model="nomeBusca" type="search" v-on:change="buscarPorNome()" required buscarPorNome/>
                     <label class="label-icon" for="search"><i class="material-icons">search</i></label>
                     <i class="material-icons">close</i>
                   </div>
-                </form>
               </div>
             </nav>
             <div class="scrolable">
@@ -55,7 +52,6 @@
           </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -71,15 +67,24 @@ export default {
       conversas: [],
       pages: [],
       pageCount: 0,
-      pageActive: 0
+      pageActive: 0,
+      nomeBusca: ""
     };
   },
   methods: {
     async buscarConversas() {
       await axios.get(`${this.$store.state.apiUrl}/chat/buscarConversasPorStatus?status=1`).then((conversas) => {
         conversas = conversas.data;
-        
-        conversas.forEach((conversa) => {
+        this.conversas = conversas;
+        this.pagination(conversas)
+      });
+    },
+    pagination(conversas){
+      this.pages = [];
+      this.pageCount = 0;
+      this.pageActive = 0;
+
+      conversas.forEach((conversa) => {
           if (conversa.mensagens.length >= 1) {
               console.log(conversa.mensagens[conversa.mensagens.length - 1].data)
             conversa.mensagens[0].data = utils.dateFormat(conversa.mensagens[0].data);
@@ -98,8 +103,16 @@ export default {
             }
           }
         });
-        console.log(this.pages)
+    },
+    buscarPorNome() {
+      let conversasFiltradosPorNome = [];
+      this.conversas.forEach(conversa =>{
+        if(conversa.mensagens[0].remetenteNome.toLowerCase().includes(this.nomeBusca.toLowerCase())){
+          conversasFiltradosPorNome.push(conversa);
+        }
       });
+      this.pagination(conversasFiltradosPorNome);
+      return;
     },
   },
   beforeMount() {

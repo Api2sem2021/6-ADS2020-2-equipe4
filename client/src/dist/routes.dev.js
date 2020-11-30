@@ -57,6 +57,11 @@ var routes = [{
   redirect: {
     path: '/panel/activities'
   }
+}, {
+  path: '/panel',
+  redirect: {
+    path: '/panel/activities'
+  }
 }];
 var router = (0, _vueRouter.createRouter)({
   history: (0, _vueRouter.createWebHistory)(),
@@ -68,6 +73,10 @@ router.beforeEach(function (to, from, next) {
       path: '/login'
     });
   } else if (to.name == 'Login' && sessionStorage.usuario) {
+    next({
+      path: '/panel/activities'
+    });
+  } else if (to.name == 'Panel') {
     next({
       path: '/panel/activities'
     });
