@@ -50,12 +50,12 @@ public class Mensagem {
     @Column(name = "destinatario_nome")
     private String destinatarioNome;
 
-    // @JsonView(View.MensagemResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @ManyToOne
     @JoinColumn(name = "remetente_id")
     private Usuario remetenteId;
 
-    // @JsonView(View.MensagemResumo.class)
+    @JsonView({View.MensagemResumo.class, View.ConversaResumo.class})
     @ManyToOne
     @JoinColumn(name = "destinatario_id")
     private Usuario destinatarioId;

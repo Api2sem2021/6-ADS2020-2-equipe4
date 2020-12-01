@@ -51,40 +51,56 @@ public class ChatController {
         return conversa;
     }
 
-    @JsonView(View.ConversaResumo.class )
+    @JsonView(View.ConversaResumo.class)
     @GetMapping(value = "/buscarPorId")
     // @PreAuthorize("isAuthenticated()")
     public Conversa buscarConversaPorId(@RequestParam("id") String id) {
         Conversa conversa = chatService.buscarConversaPorId(new Long(id));
-        
+
+        return conversa;
+    }
+
+    @JsonView(View.ConversaResumo.class)
+    @GetMapping(value = "/buscarInterna")
+    // @PreAuthorize("isAuthenticated()")
+    public Conversa buscarConversaAtiva(@RequestParam("remetente") String remetente,
+            @RequestParam("destinatario") String destinatario) {
+        Conversa conversa = chatService.buscarConversaInterna(new Long(remetente), new Long(destinatario));
+
         return conversa;
     }
 
     @JsonView(View.ConversaResumo.class)
     @GetMapping(value = "/buscarConversasPorStatus")
     public Set<Conversa> buscarConversasAtivas(@RequestParam("status") String status) {
-         Set<Conversa> conversas = chatService.buscarConversaPorStatus(new Integer(status));
+        Set<Conversa> conversas = chatService.buscarConversaPorStatus(new Integer(status));
 
-         return conversas;
-        
+        return conversas;
+
     }
 
     @JsonView(View.MensagemResumo.class)
     @PostMapping(value = "/enviarMensagem")
     public Mensagem enviarMensagem(@RequestBody ObjectNode body) {
-        Mensagem mensagem = chatService.enviarMensagem(body.get("id").asLong(), null,null,null,1L,null,null,null);
-
+        Mensagem mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(), null,
+                null, body.get("remetenteId").asLong(), body.get("destinatarioId").asLong(), body.get("data").asText(),
+                body.get("horario").asText());
+        // id: conversaCriada.id,
+        // conteudo: "teste",
+        // remetenteId: this.$store.getters.getUsuario.id,
+        // destinatarioId: this.selectedUser.id,
+        // data: "22/11/2020",
+        // horario: "22:22:22",
         return mensagem;
     }
 
     @JsonView(View.MensagemResumo.class)
     @PostMapping(value = "/buscarMensagem")
     public Mensagem buscarMensagem(@RequestBody ObjectNode body) {
-         Optional<Mensagem> mensagem = mensagemRepo.findById(body.get("id").asLong());
+        Optional<Mensagem> mensagem = mensagemRepo.findById(body.get("id").asLong());
 
         return mensagem.get();
     }
-
 
     @JsonView(View.MensagemResumo.class)
     @GetMapping(value = "/buscarMensagemAtivas")

@@ -64,6 +64,6 @@ router.beforeEach((to, from, next) => {
 
     else if (to.name == 'Panel') { next({ path: '/panel/activities' }) }
     else next();
-})
+});
 
 export default router;

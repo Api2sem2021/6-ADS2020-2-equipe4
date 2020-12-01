@@ -1,10 +1,15 @@
 package br.gov.sp.fatec.springbootapp.entity;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -13,11 +18,6 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import br.gov.sp.fatec.springbootapp.controller.View;
-
-import javax.persistence.JoinColumn;
-
-import java.io.Serializable;
-import java.util.Date;
 
 @Entity
 @Table(name = "usr_atividades")
@@ -58,12 +58,12 @@ public class Atividade implements Serializable{
     @Column(name = "atv_status")
     private Integer status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonView(View.AtividadeResumo.class)
     @JoinColumn(name = "atv_remetente_id")
     private Usuario atvRemetente;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonView(View.AtividadeResumo.class)
     @JoinColumn(name = "atv_destinatario_id")
     private Usuario atvDestinatario;

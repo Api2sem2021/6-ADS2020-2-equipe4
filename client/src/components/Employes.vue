@@ -24,7 +24,7 @@
                     </p>
                     <p class="col s6">
                       <label>
-                        <input type="checkbox" v-model="permissoes" value="Atendentes" v-on:change="filter_hub()"/>
+                        <input type="checkbox" v-model="permissoes" value="Atendentes" v-on:change="filter_hub()" />
                         <span class="white-text">Atendentes</span>
                       </label>
                     </p>
@@ -80,7 +80,7 @@
                 <span v-else class="black-text"> Atendente </span>
               </div>
               <div class="col s12">
-                <a class="btn-small blue" style="margin-bottom: 5px">Enviar Mensagem</a>
+                <a class="btn-small blue modal-trigger" style="margin-bottom: 5px" href="#modal1">Enviar Mensagem</a>
                 <br />
                 <a v-if="this.$store.getters.getUsuario.autorizacoes[0].nome == 'ROLE_ADMIN'" href="#modal_atividade" class="btn-small modal-trigger orange">Agendar Atividade</a>
               </div>
@@ -123,13 +123,34 @@
         <a class="btn green col s6" v-on:click="postAtividade()">Agendar</a>
       </div>
     </div>
+
+    <div id="modal1" class="modal white-text">
+      <div class="modal-content blue-grey darken-1">
+        <p v-if="selectedUser" style="font-size: 1.5em">Escreva a mensagem que deseja enviar para {{ selectedUser.nome }}</p>
+        <div class="input-field col s6">
+          <i class="material-icons prefix white-text">edit</i>
+          <input v-model="mensagem" id="atividade_titulo" type="text" class="white-text" />
+          <label for="input_text">Mensagem</label>
+        </div>
+      </div>
+      <div class="modal-footer blue-grey darken-1">
+        <a style="margin-right: 5px" class="modal-close waves-effect waves red btn">Fechar</a>
+        <a class="waves-effect waves btn green" v-on:click="enviarMensagem()">Enviar</a>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import M from "materialize-css";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
 
+import utils from "../utils";
+
+var stompClient;
+var socket;
 export default {
   name: "Employes",
   data() {
@@ -141,7 +162,8 @@ export default {
       atividadeConteudo: "",
       dataAgendamento: "",
       nomeBusca: "",
-      permissoes: []
+      permissoes: [],
+      mensagem: "",
     };
   },
   methods: {
@@ -159,7 +181,7 @@ export default {
             this.usuarios = usuarios;
             return;
           }
-          M.toast({ html: "<p class='red-text'>Nenhum usuario asdencontrado</p>" });
+          M.toast({ html: "<p class='red-text'>Nenhum usuario encontrado</p>" });
         })
         .catch(() => {
           M.toast({ html: "<p class='red-text'>Nenhum usuario encontrado</p>" });
@@ -215,7 +237,6 @@ export default {
     buscarUsuariosPorPermissoes() {
       let usuariosFiltradosPermissao = [];
       if (this.permissoes.indexOf("Diretores") != -1 || this.permissoes.indexOf("Atendentes") != -1) {
-
         if (this.permissoes.indexOf("Diretores") != -1) {
           this.usuariosFiltrados.forEach((usuario) => {
             if (usuario.autorizacoes[0].nome == "ROLE_ADMIN") {
@@ -244,11 +265,78 @@ export default {
       if (this.permissoes.length >= 1) {
         this.buscarUsuariosPorPermissoes();
       }
-    }
+    },
+    connect() {
+      socket = new SockJS(`${this.$store.state.apiUrl}/ws`);
+      stompClient = Stomp.over(socket);
+      stompClient.connect({ Authorization: this.$store.state.token }, (frame) => {
+        console.log("Connected: " + frame);
+        stompClient.subscribe("/user/queue/messages");
+      });
+    },
+    async enviarMensagem() {
+      let dataEnvio = new Date();
+      dataEnvio = `0${dataEnvio.getDate()}/${dataEnvio.getMonth() + 1}/${dataEnvio.getFullYear()}`;
+      await axios
+        .get(`${this.$store.getters.getApiURL}/chat/buscarInterna?remetente=${this.$store.getters.getUsuario.id}&destinatario=${this.selectedUser.id}`, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            Authorization: `Bearer ${this.$store.getters.getToken}`,
+          },
+        })
+        .then(async (conversa) => {
+          conversa = conversa.data;
+          if (!conversa || conversa == "") {
+            await axios
+              .post(
+                `${this.$store.getters.getApiURL}/chat/criarConversa`,
+                { status: "2" },
+                {
+                  headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    Authorization: `Bearer ${this.$store.getters.getToken}`,
+                  },
+                }
+              )
+              .then(async (conversaCriada) => {
+                conversaCriada = conversaCriada.data;
+                let body = {
+                  id: conversaCriada.id,
+                  conteudo: this.mensagem,
+                  remetenteID: this.$store.getters.getUsuario.id,
+                  destinatarioID: this.selectedUser.id,
+                  data: dataEnvio,
+                  hora: utils.hourFormat(),
+                  origem: "teste",
+                };
+                stompClient.send("/app/messageHandler", JSON.stringify(body));
+                this.mensagem = "";
+                M.toast({ html: "<p class='green-text'>Mensagem enviada com sucesso</p>" });
+              });
+          } else {
+            let body = {
+              id: conversa.id,
+              conteudo: this.mensagem,
+              remetenteID: this.$store.getters.getUsuario.id,
+              destinatarioID: this.selectedUser.id,
+              data: dataEnvio,
+              hora: utils.hourFormat(),
+              origem: "teste",
+              destinatarioNome: "",
+              nomeRemetente: "",
+            };
+            stompClient.send("/app/messageHandler", JSON.stringify(body));
+            this.mensagem = "";
+            M.toast({ html: "<p class='green-text'>Mensagem enviada com sucesso</p>" });
+          }
+        });
+    },
   },
+
   async beforeMount() {
     await this.buscarUsuarios();
-    this.usuariosFiltrados = this.usuarios
+    this.usuariosFiltrados = this.usuarios;
+    this.connect();
   },
   mounted() {
     let calendar_options = {

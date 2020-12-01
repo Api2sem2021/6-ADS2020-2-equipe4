@@ -3,6 +3,7 @@ package br.gov.sp.fatec.springbootapp.service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import br.gov.sp.fatec.springbootapp.entity.Conversa;
 import br.gov.sp.fatec.springbootapp.entity.Mensagem;
+import br.gov.sp.fatec.springbootapp.entity.Usuario;
 import br.gov.sp.fatec.springbootapp.exception.RegistroNaoEncontradoException;
 import br.gov.sp.fatec.springbootapp.repository.ConversaRepository;
 import br.gov.sp.fatec.springbootapp.repository.MensagemRepository;
@@ -73,7 +75,16 @@ public class ChatServiceImpl implements ChatService {
                 mensagem.setHora(hora);
                 mensagem.setRemetenteNome(remetenteNome);
                 mensagem.setDestinatarioNome(destinatarioNome);
-                mensagem.setRemetenteId(null);
+                if(remetenteId != null){
+                    Optional<Usuario> remetenteOp = usuarioRepo.findById(remetenteId);
+                    Usuario remetente = remetenteOp.get();
+                    mensagem.setRemetenteId(remetente);
+                }
+                if(destinatarioId != null){
+                    Optional<Usuario> destinatarioOp = usuarioRepo.findById(destinatarioId);
+                    Usuario destinatario = destinatarioOp.get();
+                    mensagem.setDestinatarioId(destinatario);
+                }
                 mensagem.setConversa(conversa);
                 mensagemRepo.save(mensagem);
                 return mensagem;
@@ -106,6 +117,18 @@ public class ChatServiceImpl implements ChatService {
             return conversa;
         }
         throw new RegistroNaoEncontradoException("Nenhuma conversa encontrada para o id:" + id);
+    }
+
+    @Override
+    public Conversa buscarConversaInterna(Long remetenteID, Long destinarioID) {
+        Optional<Usuario> remetenteOp = usuarioRepo.findById(remetenteID);
+        Optional<Usuario> destinarioOp = usuarioRepo.findById(destinarioID);
+
+        Usuario remetente = remetenteOp.get();
+        Usuario destinatario = destinarioOp.get();
+
+        Conversa conversa = conversaRepo.buscarConversaInterna(remetente, destinatario);
+        return conversa;
     }
     
 }

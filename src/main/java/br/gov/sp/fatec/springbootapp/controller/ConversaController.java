@@ -37,10 +37,15 @@ public class ConversaController {
             mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(),
                     body.get("nomeRemetente").asText(), null, null, null, body.get("data").asText(),
                     body.get("hora").asText());
-        } else {
+        } 
+        else if(origem.equals("painel")) {
             mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(), body.get("nomeRemetente").asText(),
                     body.get("destinatarioNome").asText(), remetenteID,
                     destinarioID, body.get("data").asText(), body.get("hora").asText());
+        }else{
+            mensagem = chatService.enviarMensagem(body.get("id").asLong(), body.get("conteudo").asText(), null,
+                null, body.get("remetenteID").asLong(), body.get("destinatarioID").asLong(), body.get("data").asText(),
+                body.get("hora").asText());
         }
 
         ObjectMapper mapper = new ObjectMapper();

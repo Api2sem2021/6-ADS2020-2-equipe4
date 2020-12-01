@@ -17,5 +17,7 @@ public interface ChatService {
     Long remetenteId, Long destinatarioId,String dataEnvio, String horario);
 
     public Conversa alterarStatusConversa(Long id,Integer status);
+
+    public Conversa buscarConversaInterna(Long remetenteID, Long destinarioID);
     
 }

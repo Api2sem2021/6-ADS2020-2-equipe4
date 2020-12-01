@@ -15,6 +15,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import br.gov.sp.fatec.springbootapp.controller.View;
@@ -22,20 +24,20 @@ import br.gov.sp.fatec.springbootapp.controller.View;
 @Entity
 @Table(name = "usr_usuario")
 public class Usuario implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
-    @JsonView({ View.AtividadeResumo.class, View.UsuarioResumo.class })
+    @JsonView({ View.AtividadeResumo.class, View.UsuarioResumo.class,View.ConversaResumo.class  })
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "usr_id")
     private Long id;
-    
-    @JsonView({ View.UsuarioResumo.class, View.AutorizacaoResumo.class,
-            View.MensagemResumo.class, View.AtividadeResumo.class })
+
+    @JsonView({ View.UsuarioResumo.class, View.AutorizacaoResumo.class, View.MensagemResumo.class,
+            View.AtividadeResumo.class,View.ConversaResumo.class })
     @Column(name = "usr_nome")
     private String nome;
-    
+
     @JsonView(View.UsuarioResumo.class)
     @Column(name = "usr_avatar", columnDefinition = "TEXT")
     private String avatar;
@@ -48,18 +50,18 @@ public class Usuario implements Serializable {
     @JoinTable(name = "uau_usuario_autorizacao", joinColumns = { @JoinColumn(name = "usr_id") }, inverseJoinColumns = {
             @JoinColumn(name = "aut_id") })
     private Set<Autorizacao> autorizacoes;
-    
-    @OneToMany(mappedBy = "atvRemetente",fetch = FetchType.LAZY)
-    private Set<Atividade> atividadesEnviadas;
-    
-    
-    @OneToMany(mappedBy = "atvDestinatario", fetch = FetchType.LAZY)
-    private Set<Atividade> atividadesRecebidas;
 
-    @OneToMany(mappedBy = "remetenteId",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "atvRemetente", fetch = FetchType.EAGER)
+    private Set<Atividade> atividadesEnviadas;
+
+    @OneToMany(mappedBy = "atvDestinatario", fetch = FetchType.EAGER)
+    private Set<Atividade> atividadesRecebidas;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "remetenteId", fetch = FetchType.LAZY)
     private Set<Mensagem> mensagensEnviadas;
-    
-    
+
+    @JsonIgnore
     @OneToMany(mappedBy = "destinatarioId", fetch = FetchType.LAZY)
     private Set<Mensagem> mensagensRecebidas;
 

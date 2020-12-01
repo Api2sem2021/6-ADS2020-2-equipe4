@@ -19,7 +19,8 @@
               <ul class="collection z-depth-2">
                 <li class="collection-item avatar pop" v-for="(conversa, key) in conversas" v-bind:key="conversa.id" v-bind:id="key" v-on:click="() => this.changeConversa(conversa, key)" v-bind:class="{ liAactive: this.conversaSelecionadaID === conversa.id }">
                   <i class="large material-icons circle blue z-depth-2">person</i>
-                  <strong class="title green-text lighten-1">{{ conversa.mensagens[0].remetenteNome }}</strong>
+                  <strong v-if="conversa.mensagens[0].remetenteId.nome == $store.getters.getUsuario.nome" class="title green-text lighten-1">{{ conversa.mensagens[0].destinatarioId.nome }}</strong>
+                  <strong v-else class="title green-text lighten-1">{{ conversa.mensagens[0].remetenteId.nome }}</strong>
                   <p class="truncate">
                     {{ conversa.mensagens[conversa.mensagens.length - 1].conteudo }}
                   </p>
@@ -30,14 +31,15 @@
 
             <nav class="col s12 m8 l8 green lighten-1">
               <div class="nav-wrapper">
-                <a href="#!" class="brand-logo"><i class="material-icons">person</i>{{ conversaNome }}</a>
+                <a v-if="conversaSelecionada.length >= 1 && conversaSelecionada[0].remetenteId.nome == $store.getters.getUsuario.nome" href="#!" class="brand-logo"><i class="material-icons">person</i>{{ conversaSelecionada[0].destinatarioId.nome }}</a>
+                <a v-if="conversaSelecionada.length >= 1 && conversaSelecionada[0].remetenteId.nome != $store.getters.getUsuario.nome" href="#!" class="brand-logo"><i class="material-icons">person</i>{{ conversaSelecionada[0].remetenteId.nome }}</a>
               </div>
             </nav>
             <div class="col s12 m8 l8" style="padding: 0px !important">
               <div class="green lighten-3 chat-wrapper" ref="chat">
                 <div v-for="(mensagem, key) in conversaSelecionada" v-bind:key="mensagem.id" v-bind:id="key">
                   <div class="col l12">
-                    <div class="col s8 m4 l4 white z-depth-3 message pop" v-if="mensagem.destinatarioNome == null">
+                    <div class="col s8 m4 l4 white z-depth-3 message pop" v-if="mensagem.destinatarioId.nome != $store.getters.getUsuario.nome">
                       <p class="left-align">
                         {{ mensagem.conteudo }}
                       </p>
@@ -46,8 +48,7 @@
                       </p>
                     </div>
                   </div>
-
-                  <div class="col s8 m4 l4 offset-s4 offset-m8 offset-l8 white z-depth-3 message pop" v-if="mensagem.destinatarioNome != null">
+                  <div class="col s8 m4 l4 offset-s4 offset-m8 offset-l8 white z-depth-3 message pop" v-if="mensagem.destinatarioId.nome == $store.getters.getUsuario.nome">
                     <p class="left-align">
                       {{ mensagem.conteudo }}
                     </p>
@@ -129,16 +130,22 @@ export default {
     },
 
     sendMessage() {
+      let destinatarioID;
+      if(this.conversaSelecionada[0].remetenteId.nome == this.$store.getters.getUsuario.nome){
+        destinatarioID = this.conversaSelecionada[0].destinatarioId.id
+      }else{
+        destinatarioID = this.conversaSelecionada[0].remetenteId.id
+      }
       let body = JSON.stringify({
         conteudo: this.mensagem,
         id: this.conversaSelecionadaID,
         data: utils.dateFormat(),
         hora: utils.hourFormat(),
-        destinatarioNome: this.conversaNome,
-        nomeRemetente: this.$store.state.usuario.nome,
-        destinatarioID: null,
-        remetenteID: null,
-        origem: "painel",
+        destinatarioNome: "",
+        nomeRemetente: "",
+        destinatarioID,
+        remetenteID: this.$store.getters.getUsuario.id,
+        origem: "teste"
       });
 
       stompClient.send("/app/messageHandler", body);
@@ -165,7 +172,7 @@ export default {
       return;
     },
     async buscarConversas() {
-      await axios.get(`${this.$store.state.apiUrl}/chat/buscarConversasPorStatus?status=0`).then((conversasAtivas) => {
+      await axios.get(`${this.$store.state.apiUrl}/chat/buscarConversasPorStatus?status=2`).then((conversasAtivas) => {
         if (conversasAtivas.data.length >= 1) {
           conversasAtivas = conversasAtivas.data;
           conversasAtivas.forEach((conversa) => {
@@ -176,21 +183,6 @@ export default {
           });
         }
       });
-    },
-    async finalizarConversa(id, key) {
-      this.mensagem = "Conversa finalizada";
-      this.sendMessage();
-      await axios.post(`${this.$store.state.apiUrl}/chat/alterarStatus`, { id, status: 1 }).then(() => {
-        document.getElementById(key).classList.add("popOut");
-        M.toast({ html: "Conversa finalizada" });
-        setTimeout(() => {
-          this.conversas.splice(key, 1);
-        }, 500);
-        setTimeout(() => {
-          this.clearConversa();
-        }, 500);
-      });
-      return;
     },
   },
   async beforeMount() {
