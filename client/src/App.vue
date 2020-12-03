@@ -121,7 +121,7 @@ label.active {
 }
 
 .input-field .prefix.active {
-    color: #66bb6a;
+    color: #66bb6a !important;
 }
 ::-webkit-scrollbar {
     width: 7px;

@@ -4,7 +4,8 @@ const state = {
     usuario: JSON.parse(sessionStorage.getItem('usuario')) || {},
     token: sessionStorage.getItem('token') || "",
     apiUrl: "http://localhost:8081/spring-app",
-    section: "activities"
+    section: "activities",
+    atividadesAbertas: 0
 };
 
 const mutations = {
@@ -16,6 +17,9 @@ const mutations = {
     },
     setSection(state, section){
         state.section = section;
+    },
+    setAtv(state,number){
+        state.atividadesAbertas = number;
     }
 }
 
@@ -31,6 +35,9 @@ const getters = {
     },
     getSection: state =>{
         return state.section;
+    },
+    getAtvAbertas: state =>{
+        return state.atividadesAbertas;
     }
 }
 

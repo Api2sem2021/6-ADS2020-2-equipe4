@@ -135,7 +135,7 @@
               <div class="col l12">
                 <div
                   class="col s8 m4 l4 white z-depth-3 message pop"
-                  v-if="mensagem.destinatarioNome == null"
+                  v-if="mensagem.destinatarioNome != null"
                   style="
                     padding-left: 10px !important;
                     padding-bottom: 0px !important;
@@ -154,7 +154,7 @@
 
               <div
                 class="col s8 m4 l4 offset-s4 offset-m8 offset-l8 white z-depth-3 message pop"
-                v-if="mensagem.destinatarioNome != null"
+                v-if="mensagem.destinatarioNome == null"
                 style="
                   padding-left: 10px !important;
                   padding-bottom: 0px !important;

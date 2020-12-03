@@ -11,7 +11,8 @@ var state = {
   usuario: JSON.parse(sessionStorage.getItem('usuario')) || {},
   token: sessionStorage.getItem('token') || "",
   apiUrl: "http://localhost:8081/spring-app",
-  section: "activities"
+  section: "activities",
+  atividadesAbertas: 0
 };
 var mutations = {
   setUser: function setUser(state, usuario) {
@@ -22,6 +23,9 @@ var mutations = {
   },
   setSection: function setSection(state, section) {
     state.section = section;
+  },
+  setAtv: function setAtv(state, number) {
+    state.atividadesAbertas = number;
   }
 };
 var getters = {
@@ -36,6 +40,9 @@ var getters = {
   },
   getSection: function getSection(state) {
     return state.section;
+  },
+  getAtvAbertas: function getAtvAbertas(state) {
+    return state.atividadesAbertas;
   }
 };
 

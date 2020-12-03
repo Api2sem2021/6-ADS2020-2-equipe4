@@ -1,9 +1,12 @@
 package br.gov.sp.fatec.springbootapp.repository;
 
+import java.util.Set;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import br.gov.sp.fatec.springbootapp.entity.Atividade;
+import br.gov.sp.fatec.springbootapp.entity.Usuario;
 
 public interface AtividadeRepository extends JpaRepository<Atividade, Long> {
         // List<Notificacao> findByUsuario(Usuario Usuario);
@@ -17,4 +20,7 @@ public interface AtividadeRepository extends JpaRepository<Atividade, Long> {
 
         @Query("delete from Atividade a where a.id=?1")
         public void deleteAtividadePorId(Long atvID);
+
+        @Query("select a from Atividade a where a.status = ?1 AND a.atvDestinatario = ?2")
+        public Set<Atividade> buscarAbertas(Integer status, Usuario usuario);
 }
