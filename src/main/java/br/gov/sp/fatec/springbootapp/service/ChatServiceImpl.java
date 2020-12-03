@@ -31,7 +31,7 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     MensagemRepository mensagemRepo;
     
-    SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
 
     @Override

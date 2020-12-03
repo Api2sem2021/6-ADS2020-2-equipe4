@@ -123,4 +123,14 @@ label.active {
 .input-field .prefix.active {
     color: #66bb6a;
 }
+::-webkit-scrollbar {
+    width: 7px;
+    padding: 2px;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
 </style>

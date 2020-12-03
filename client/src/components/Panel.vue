@@ -21,7 +21,7 @@
           class="white-text"
           v-bind:class="{ menuActive: $store.getters.getSection == 'activities' }"
         >
-          <a class="waves-effect waves-light white-text"> <i class="material-icons white-text">notifications</i>Atividades<span class="new badge red" data-badge-caption="abertas">11</span></a>
+          <a class="waves-effect waves-light white-text"> <i class="material-icons white-text">notifications</i>Atividades<span class="new badge blue" data-badge-caption="abertas">11</span></a>
         </li>
         <li
           style="cursor:pointer"

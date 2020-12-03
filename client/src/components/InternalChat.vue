@@ -9,7 +9,7 @@
                 <div class="nav-wrapper green lighten-1" style="margin-top: 5px">
                   <form>
                     <div class="input-field">
-                      <input id="search" type="search" required placeholder="Buscar por nome"/>
+                      <input id="search" type="search" required placeholder="Buscar por nome" />
                       <label class="label-icon" for="search"><i class="material-icons">search</i></label>
                       <i class="material-icons">close</i>
                     </div>
@@ -64,7 +64,7 @@
                   <input v-model="mensagem" type="text" class="validate white-text" />
                   <label for="search" class="white-text">Digite a sua mensagem</label>
                 </div>
-                <a class="col s4 btn-large waves-effect green lighten-1" style="margin-top: 5px" v-on:click="sendMessage()"><i class="material-icons left">send</i>Enviar</a>
+                <a class="col s4 btn-large waves-effect green lighten-1" style="margin-top: 5px" v-on:click="this.sendMessage()"><i class="material-icons left">send</i>Enviar</a>
               </div>
             </div>
           </div>
@@ -103,6 +103,9 @@ export default {
       this.conversaSelecionadaID = conversa.id;
       this.conversaNome = conversa.mensagens[0].remetenteNome;
       this.conversaSelecionadaKey = key;
+      setTimeout(() => {
+        this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight;
+      }, 500);
     },
     clearConversa() {
       this.conversaSelecionada = null;
@@ -122,30 +125,32 @@ export default {
       });
     },
     disconnect() {
-      if (stompClient !== null) {
+      if (stompClient) {
         stompClient.disconnect();
       }
-      this.setConnected(false);
       console.log("Disconnected");
     },
 
     sendMessage() {
       let destinatarioID;
-      if(this.conversaSelecionada[0].remetenteId.nome == this.$store.getters.getUsuario.nome){
-        destinatarioID = this.conversaSelecionada[0].destinatarioId.id
-      }else{
-        destinatarioID = this.conversaSelecionada[0].remetenteId.id
+      let data = new Date();
+      let dia = data.getDate();
+      if(data.getDate().toString().length == 10) dia = `0${data.getDate()}`
+      if (this.conversaSelecionada[0].remetenteId.nome == this.$store.getters.getUsuario.nome) {
+        destinatarioID = this.conversaSelecionada[0].destinatarioId.id;
+      } else {
+        destinatarioID = this.conversaSelecionada[0].remetenteId.id;
       }
       let body = JSON.stringify({
         conteudo: this.mensagem,
         id: this.conversaSelecionadaID,
-        data: utils.dateFormat(),
+        data: `${data.getFullYear()}-${data.getMonth() + 1}-${dia}`,
         hora: utils.hourFormat(),
         destinatarioNome: "",
         nomeRemetente: "",
         destinatarioID,
         remetenteID: this.$store.getters.getUsuario.id,
-        origem: "teste"
+        origem: "teste",
       });
 
       stompClient.send("/app/messageHandler", body);
@@ -162,8 +167,10 @@ export default {
       } else {
         await axios.get(`${this.$store.state.apiUrl}/chat/buscarPorId?id=${msg.conversa.id}`).then((conversa) => {
           conversa = conversa.data;
-          this.conversas.push(conversa);
-          this.conversasID.push(conversa.id);
+          if (conversa.mensagens[0].remetenteId.id == this.$store.getters.getUsuario.id || conversa.mensagens[0].destinatarioId.id == this.$store.getters.getUsuario.id) {
+            this.conversas.push(conversa);
+            this.conversasID.push(conversa.id);
+          }
         });
       }
       setTimeout(() => {
@@ -176,7 +183,7 @@ export default {
         if (conversasAtivas.data.length >= 1) {
           conversasAtivas = conversasAtivas.data;
           conversasAtivas.forEach((conversa) => {
-            if (conversa.mensagens.length >= 1) {
+            if (conversa.mensagens.length >= 1 && (conversa.mensagens[0].remetenteId.id == this.$store.getters.getUsuario.id || conversa.mensagens[0].destinatarioId.id == this.$store.getters.getUsuario.id)) {
               this.conversas.push(conversa);
               this.conversasID.push(conversa.id);
             }
@@ -187,6 +194,7 @@ export default {
   },
   async beforeMount() {
     this.buscarConversas();
+    this.disconnect();
     this.connect();
   },
   mounted() {

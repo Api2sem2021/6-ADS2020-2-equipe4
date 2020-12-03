@@ -104,6 +104,9 @@ export default {
       this.conversaSelecionadaID = conversa.id;
       this.conversaNome = conversa.mensagens[0].remetenteNome;
       this.conversaSelecionadaKey = key;
+      setTimeout(() => {
+        this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight;
+      }, 500);
     },
     clearConversa() {
       this.conversaSelecionada = null;
@@ -123,18 +126,21 @@ export default {
       });
     },
     disconnect() {
-      if (stompClient !== null) {
+      if (stompClient) {
+        console.log(stompClient);
         stompClient.disconnect();
       }
-      this.setConnected(false);
       console.log("Disconnected");
     },
 
     sendMessage() {
+      let data = new Date();
+      let dia = data.getDate();
+      if (data.getDate().toString().length == 10) dia = `0${data.getDate()}`;
       let body = JSON.stringify({
         conteudo: this.mensagem,
         id: this.conversaSelecionadaID,
-        data: utils.dateFormat(),
+        data: `${data.getFullYear()}-${data.getMonth() + 1}-${dia}`,
         hora: utils.hourFormat(),
         destinatarioNome: this.conversaNome,
         nomeRemetente: this.$store.state.usuario.nome,
@@ -180,24 +186,24 @@ export default {
       });
     },
     async finalizarConversa(id, key) {
-        this.mensagem = "Conversa finalizada";
-        this.sendMessage();
-        await axios.post(`${this.$store.state.apiUrl}/chat/alterarStatus`, { id, status: 1 }).then(() => {
-          document.getElementById(key).classList.add("popOut");
-          M.toast({ html: "Conversa finalizada" });
-          setTimeout(() => {
-            this.conversas.splice(key, 1);
-          }, 500);
-          setTimeout(() => {
-            this.clearConversa();
-          }, 500);
-          
-        });
-        return;
+      this.mensagem = "Conversa finalizada";
+      this.sendMessage();
+      await axios.post(`${this.$store.state.apiUrl}/chat/alterarStatus`, { id, status: 1 }).then(() => {
+        document.getElementById(key).classList.add("popOut");
+        M.toast({ html: "Conversa finalizada" });
+        setTimeout(() => {
+          this.conversas.splice(key, 1);
+        }, 500);
+        setTimeout(() => {
+          this.clearConversa();
+        }, 500);
+      });
+      return;
     },
   },
   async beforeMount() {
     this.buscarConversas();
+    this.disconnect();
     this.connect();
   },
   mounted() {
@@ -213,7 +219,7 @@ export default {
 .message {
   width: 270px;
   margin-top: 5px;
-  padding: 15px !important;
+  padding: 15px;
 }
 
 .chat-wrapper {

@@ -81,17 +81,18 @@
       </div>
     </div>
 
-    <div id="modal_atividade" class="modal" style="height: 400px">
-      <div class="modal-content">
+    <div id="modal_atividade" class="modal blue-grey darken-1" style="height: 400px">
+      <div class="modal-content ">
         <div class="row">
           <h4 class="col s12 center-align green-text text-lighten-1">
             {{ atividadeSelectedTitulo }}
           </h4>
+          <div class="divider"></div>
         </div>
-        <div class="grey lighten-3 col s12 center-align">
+        <div class="blue-grey lighten-1 col s12 center-align white-text">
           <blockquote>{{ atividadeSelectedTituloConteudo }}</blockquote>
         </div>
-        <div class="grey lighten-3 col s12 left-align" style="margin-top: 5px">
+        <div class="blue-grey lighten-1 col s12 left-align white-text" style="margin-top: 5px">
           <p>
             Disparada por: {{ atividadeSelectedRemetenteNome }}
             {{ atividadeSelectedDataDisparo }}
